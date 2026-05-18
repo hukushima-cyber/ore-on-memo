@@ -739,6 +739,7 @@ input,textarea{-webkit-appearance:none;}
 
 <script>
 const KEY='ore-memo-v5';
+const GAS_URL='https://script.google.com/macros/s/AKfycby7qCAfVKcFGx48cBQlNO171qbFQeZ3b1hnAp5u0D4jCK5_pVxrIjCB3_bV2qZ-HOFEOA/exec';
 let S={
   tasks:[],waits:[],futures:[],
   money:{in:[],next:[],unc:[],unb:[]},
@@ -769,8 +770,50 @@ let futureFilter='all';
 let mmType='in';
 let editMode=false;
 
-function load(){try{const d=localStorage.getItem(KEY);if(d){const p=JSON.parse(d);S=Object.assign(S,p);if(!S.dump||typeof S.dump==='string')S.dump={nayami:'',omoi:'',toppa:'',nandemo:''};if(!S.three)S.three={t1:'',t2:'',t3:''};}}catch(e){}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function load(){
+  // まずローカルから即時読み込み（表示を速くする）
+  try{const d=localStorage.getItem(KEY);if(d){const p=JSON.parse(d);S=Object.assign(S,p);if(!S.dump||typeof S.dump==='string')S.dump={nayami:'',omoi:'',toppa:'',nandemo:''};if(!S.three)S.three={t1:'',t2:'',t3:''};}}catch(e){}
+  // クラウドからも読み込んで上書き
+  fetch(GAS_URL+'?action=load')
+    .then(r=>r.json())
+    .then(p=>{
+      if(p&&Object.keys(p).length>0){
+        S=Object.assign(S,p);
+        if(!S.dump||typeof S.dump==='string')S.dump={nayami:'',omoi:'',toppa:'',nandemo:''};
+        if(!S.three)S.three={t1:'',t2:'',t3:''};
+        localStorage.setItem(KEY,JSON.stringify(S));
+        // 画面を再描画
+        dailyReset();loadThree();loadDumps();
+        renderTasks();renderWait();renderFuture();renderMoney();renderStudy();renderTriggers();
+        showSyncStatus('✓ クラウドから読み込み完了');
+      }
+    })
+    .catch(()=>showSyncStatus('オフライン（ローカルデータを使用中）'));
+}
+
+function save(){
+  // ローカルにも保存（オフライン対応）
+  try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
+  // クラウドにも保存
+  const data=JSON.stringify(S);
+  fetch(GAS_URL+'?action=save&data='+encodeURIComponent(data))
+    .then(r=>r.text())
+    .then(()=>showSyncStatus('✓ 保存完了'))
+    .catch(()=>showSyncStatus('オフライン（ローカルに保存済み）'));
+}
+
+function showSyncStatus(msg){
+  let el=document.getElementById('sync-status');
+  if(!el){
+    el=document.createElement('div');
+    el.id='sync-status';
+    el.style.cssText='position:fixed;top:env(safe-area-inset-top,0);left:0;right:0;background:rgba(0,200,83,.9);color:#000;font-size:11px;font-weight:900;text-align:center;padding:4px;z-index:999;transition:opacity .5s;';
+    document.body.appendChild(el);
+  }
+  el.textContent=msg;
+  el.style.opacity='1';
+  setTimeout(()=>el.style.opacity='0',2000);
+}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function uid(){return Date.now()+Math.floor(Math.random()*9999);}
 function todayStr(){const d=new Date();return`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;}
