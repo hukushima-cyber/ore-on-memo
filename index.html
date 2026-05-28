@@ -4,1127 +4,1648 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>俺のメモ</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#0f0f0f;--s1:#181818;--s2:#202020;--s3:#282828;
-  --border:#2e2e2e;--text:#f0f0f0;--t2:#888;--t3:#444;
-  --red:#ff3b30;--orange:#ff6b00;--yellow:#ffd60a;
-  --green:#30d158;--blue:#0a84ff;--purple:#bf5af2;--r:11px;
-}
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html{height:100%;background:var(--bg);}
-body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;max-width:430px;margin:0 auto;min-height:100%;}
-button,input,textarea,select{font-family:'Noto Sans JP',sans-serif;}
-input,textarea{-webkit-appearance:none;}
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    background: #0f0f10;
+    color: #e8e8e8;
+    font-size: 16px;
+    line-height: 1.5;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  input, textarea, button {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    background: transparent;
+    border: none;
+    outline: none;
+  }
+  button { cursor: pointer; }
 
-/* NAV */
-.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;z-index:100;background:rgba(15,15,15,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom,0px);}
-.nb{flex:1;padding:10px 2px 8px;background:none;border:none;color:var(--t3);font-size:8.5px;font-weight:700;letter-spacing:.05em;display:flex;flex-direction:column;align-items:center;gap:3px;transition:color .15s;position:relative;cursor:pointer;}
-.nb svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-.nb.on{color:var(--orange);}
-.nb .dot{position:absolute;top:7px;right:calc(50% - 13px);width:6px;height:6px;border-radius:50%;background:var(--red);border:1.5px solid var(--bg);display:none;}
-.nb .dot.show{display:block;}
+  /* ===== 固定ヘッダー ===== */
+  .fixed-top {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #0f0f10;
+    border-bottom: 1px solid #2a2a2c;
+  }
 
-/* SCREENS */
-.sc{display:none;padding:0 0 calc(64px + env(safe-area-inset-bottom,0px));}
-.sc.on{display:block;}
+  /* 全部ここ入力バー（常時最上部） */
+  .quickbar {
+    padding: 8px 12px 6px;
+    background: #18181a;
+    border-bottom: 1px solid #2a2a2c;
+  }
+  .quickbar-input {
+    width: 100%;
+    background: #232325;
+    border: 1px solid #3a3a3c;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 15px;
+    color: #fff;
+    resize: none;
+    min-height: 38px;
+    max-height: 120px;
+  }
+  .quickbar-input::placeholder { color: #666; }
+  .quickbar-tags {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+  .qtag {
+    background: #2a2a2c;
+    color: #aaa;
+    border: 1px solid #3a3a3c;
+    border-radius: 14px;
+    padding: 3px 10px;
+    font-size: 11px;
+  }
+  .qtag.active { background: #4a90e2; color: #fff; border-color: #4a90e2; }
+  .qtag-send {
+    background: #4a90e2;
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 3px 14px;
+    font-size: 11px;
+    margin-left: auto;
+    font-weight: 600;
+  }
 
-/* PAGE HEADER */
-.ph{position:sticky;top:0;z-index:50;background:rgba(15,15,15,.97);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:13px 15px 11px;display:flex;align-items:center;justify-content:space-between;}
-.ph-title{font-size:17px;font-weight:900;letter-spacing:.02em;}
-.ph-sub{font-size:9px;color:var(--t2);font-weight:700;letter-spacing:.08em;}
+  /* NOWカード */
+  .now-card {
+    margin: 8px 12px;
+    padding: 12px 14px;
+    background: linear-gradient(135deg, #1a3a5c 0%, #1a4a3c 100%);
+    border-radius: 12px;
+    border: 1px solid #2a5a7c;
+  }
+  .now-label {
+    font-size: 10px;
+    color: #7ac0ff;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .now-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    word-break: break-word;
+  }
+  .now-empty {
+    color: #5a8aab;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 14px;
+  }
+  .now-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .now-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+  }
 
-/* APP BAR */
-.app-bar{display:flex;gap:7px;padding:11px 14px 0;overflow-x:auto;scrollbar-width:none;}
-.app-bar::-webkit-scrollbar{display:none;}
-.app-link{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:7px 11px;color:var(--t2);font-size:8.5px;font-weight:900;letter-spacing:.04em;text-decoration:none;transition:all .15s;white-space:nowrap;cursor:pointer;}
-.app-link:active{border-color:var(--orange);color:var(--orange);}
-.app-link-icon{font-size:17px;line-height:1;}
+  /* 今日絶対3つ */
+  .today3 {
+    margin: 8px 12px 10px;
+    padding: 10px 12px;
+    background: #1c1c1e;
+    border-radius: 12px;
+    border: 1px solid #2a2a2c;
+  }
+  .today3-label {
+    font-size: 10px;
+    color: #f5a623;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .today3-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid #232325;
+    font-size: 14px;
+  }
+  .today3-item:last-child { border-bottom: none; }
+  .today3-item.done .today3-text { text-decoration: line-through; color: #555; }
+  .check {
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid #555;
+    border-radius: 5px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .check.checked {
+    background: #f5a623;
+    border-color: #f5a623;
+  }
+  .check.checked::after {
+    content: '✓';
+    color: #000;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .today3-text {
+    flex: 1;
+    color: #ddd;
+    word-break: break-word;
+    cursor: pointer;
+  }
+  .today3-text.placeholder { color: #444; font-style: italic; }
+  .today3-del {
+    color: #555;
+    font-size: 18px;
+    padding: 0 6px;
+  }
 
-/* 3つ決めボックス */
-.three-box{margin:11px 14px 0;background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:12px 13px;}
-.three-box-title{font-size:9px;font-weight:900;color:var(--t2);letter-spacing:.12em;margin-bottom:9px;}
-.three-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
-.three-row:last-child{margin-bottom:0;}
-.three-num{font-size:11px;font-weight:900;color:var(--orange);width:14px;flex-shrink:0;}
-.three-input{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:7px;padding:8px 10px;color:var(--text);font-size:12px;font-weight:700;outline:none;}
-.three-input:focus{border-color:var(--orange);}
-.three-input::placeholder{color:var(--t3);}
-.three-save{width:100%;margin-top:9px;background:var(--s2);border:1px solid var(--border);color:var(--t2);font-size:10px;font-weight:900;border-radius:8px;padding:8px;cursor:pointer;letter-spacing:.04em;transition:all .15s;}
-.three-save:active{border-color:var(--orange);color:var(--orange);}
+  /* ===== タブナビ ===== */
+  .tab-section-label {
+    padding: 8px 14px 4px;
+    font-size: 9px;
+    color: #666;
+    letter-spacing: 2px;
+    font-weight: 700;
+  }
+  .tabs {
+    display: flex;
+    gap: 4px;
+    padding: 0 8px 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    border-radius: 18px;
+    background: #1c1c1e;
+    border: 1px solid #2a2a2c;
+    font-size: 13px;
+    color: #999;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .tab.active {
+    background: #4a90e2;
+    color: #fff;
+    border-color: #4a90e2;
+  }
+  .tab.main.active { background: #4a90e2; border-color: #4a90e2; }
+  .tab.sub { font-size: 12px; }
+  .tab.sub.active { background: #6a6a6c; border-color: #6a6a6c; }
+  .badge {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    min-width: 16px;
+    text-align: center;
+  }
+  .tab:not(.active) .badge {
+    background: #f5a623;
+    color: #000;
+  }
+  .tab:not(.active) .badge.zero { display: none; }
 
-/* NOW BLOCK */
-.now-block{margin:11px 14px 0;background:var(--orange);border-radius:var(--r);padding:14px 15px 13px;position:relative;overflow:hidden;min-height:82px;}
-.now-block::before{content:'NOW';position:absolute;right:8px;bottom:-6px;font-size:52px;font-weight:900;color:rgba(0,0,0,.1);letter-spacing:-.02em;line-height:1;pointer-events:none;}
-.now-eyebrow{font-size:9px;font-weight:900;letter-spacing:.14em;color:rgba(0,0,0,.45);margin-bottom:5px;}
-.now-task{font-size:18px;font-weight:900;color:#000;line-height:1.35;max-width:85%;}
-.now-empty{font-size:13px;font-weight:700;color:rgba(0,0,0,.4);}
-.now-actions{display:flex;gap:7px;margin-top:11px;}
-.now-btn{padding:7px 15px;border-radius:8px;border:none;font-size:11px;font-weight:900;letter-spacing:.04em;transition:transform .1s;cursor:pointer;}
-.now-btn:active{transform:scale(.95);}
-.now-done{background:#000;color:var(--orange);}
-.now-stop{background:rgba(0,0,0,.18);color:rgba(0,0,0,.6);}
+  /* ===== コンテンツエリア ===== */
+  .content {
+    padding: 8px 12px 120px;
+  }
+  .section {
+    background: #1c1c1e;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #2a2a2c;
+    overflow: hidden;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    background: #232325;
+    cursor: pointer;
+    user-select: none;
+  }
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ddd;
+    flex: 1;
+  }
+  .section-count {
+    color: #888;
+    font-size: 11px;
+    margin-right: 6px;
+  }
+  .section-toggle {
+    color: #666;
+    font-size: 12px;
+    transition: transform 0.2s;
+  }
+  .section.collapsed .section-toggle { transform: rotate(-90deg); }
+  .section-body { padding: 8px 12px 12px; }
+  .section.collapsed .section-body { display: none; }
 
-/* SECTION LABEL */
-.sl{padding:13px 15px 7px;font-size:9px;font-weight:900;color:var(--t2);letter-spacing:.13em;display:flex;align-items:center;gap:6px;}
-.sl-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+  /* アイテムカード */
+  .item {
+    background: #2a2a2c;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    border: 1px solid #333;
+    position: relative;
+    cursor: grab;
+  }
+  .item:last-child { margin-bottom: 0; }
+  .item.dragging { opacity: 0.4; }
+  .item.drag-over { border-color: #4a90e2; border-style: dashed; }
+  .item-drag {
+    color: #555;
+    font-size: 14px;
+    cursor: grab;
+    padding-top: 2px;
+    flex-shrink: 0;
+    touch-action: none;
+  }
+  .item-text {
+    flex: 1;
+    font-size: 14px;
+    color: #ddd;
+    word-break: break-word;
+    white-space: pre-wrap;
+    line-height: 1.45;
+  }
+  .item-text.done { text-decoration: line-through; color: #666; }
+  .item-actions {
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+  .iconbtn {
+    background: transparent;
+    border: none;
+    color: #666;
+    padding: 2px 6px;
+    font-size: 14px;
+    border-radius: 4px;
+  }
+  .iconbtn:hover { background: #3a3a3c; color: #ccc; }
+  .item-meta {
+    font-size: 10px;
+    color: #666;
+    margin-top: 4px;
+  }
+  .item-tag {
+    display: inline-block;
+    background: #3a3a3c;
+    color: #aaa;
+    padding: 1px 7px;
+    border-radius: 8px;
+    font-size: 10px;
+    margin-right: 4px;
+  }
+  .empty-state {
+    color: #555;
+    font-size: 13px;
+    padding: 12px 4px;
+    text-align: center;
+    font-style: italic;
+  }
 
-/* TASK CARD */
-.tc{margin:0 14px 6px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:10px 11px;display:flex;align-items:flex-start;gap:9px;transition:border-color .15s,opacity .15s;}
-.tc.doing{border-color:var(--orange);background:rgba(255,107,0,.07);}
-.tc.done{opacity:.32;}
-.tc.done .tc-text{text-decoration:line-through;}
-.tc-check{width:19px;height:19px;border-radius:5px;border:2px solid var(--border);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;background:none;cursor:pointer;transition:all .15s;}
-.tc.done .tc-check{background:var(--green);border-color:var(--green);}
-.tc-body{flex:1;min-width:0;}
-.tc-text{font-size:13px;font-weight:700;line-height:1.5;word-break:break-all;}
-.tc-tag{display:inline-block;margin-top:4px;font-size:9px;font-weight:900;letter-spacing:.07em;padding:2px 7px;border-radius:4px;}
-.tc-acts{display:flex;gap:4px;flex-shrink:0;}
-.ib{width:25px;height:25px;border-radius:6px;border:none;background:var(--s2);color:var(--t2);font-size:12px;display:flex;align-items:center;justify-content:center;transition:background .1s;cursor:pointer;}
-.ib:active{background:var(--s3);}
-.play{color:var(--orange);}
+  /* 「追加」ミニボタン */
+  .miniadd {
+    background: #2a2a2c;
+    border: 1px dashed #444;
+    color: #888;
+    padding: 8px;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 12px;
+    margin-top: 6px;
+  }
 
-/* ADD ROW */
-.add-row{margin:0 14px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:9px 11px;display:flex;gap:7px;align-items:center;}
-.ai{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:13px;font-weight:700;min-width:0;}
-.ai::placeholder{color:var(--t3);}
-.asel{background:var(--s2);border:1px solid var(--border);color:var(--text);font-size:10px;font-weight:700;border-radius:6px;padding:5px 4px;outline:none;flex-shrink:0;max-width:70px;cursor:pointer;}
-.a-btn{width:29px;height:29px;border-radius:8px;background:var(--orange);border:none;color:#000;font-size:18px;font-weight:900;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:transform .1s;cursor:pointer;}
-.a-btn:active{transform:scale(.9);}
+  /* インライン入力（追加時） */
+  .inline-input-wrap {
+    background: #2a2a2c;
+    border: 1px solid #4a90e2;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 6px;
+  }
+  .inline-input {
+    width: 100%;
+    background: transparent;
+    color: #fff;
+    font-size: 14px;
+    min-height: 40px;
+    resize: none;
+  }
+  .inline-input-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .inline-btn {
+    background: #4a90e2;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .inline-btn.cancel {
+    background: #3a3a3c;
+    color: #aaa;
+  }
 
-/* DIVIDER */
-.div{height:1px;background:var(--border);margin:12px 15px;}
+  /* お金タブのサマリー */
+  .money-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .money-card {
+    background: #232325;
+    border-radius: 10px;
+    padding: 10px;
+    border: 1px solid #2a2a2c;
+  }
+  .money-label {
+    font-size: 10px;
+    color: #888;
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+  }
+  .money-amount {
+    font-size: 16px;
+    font-weight: 700;
+    color: #4ade80;
+  }
+  .money-amount.warn { color: #f5a623; }
+  .money-amount.alert { color: #ef5a5a; }
 
-/* EMPTY */
-.emp{padding:10px;text-align:center;color:var(--t3);font-size:11px;font-weight:700;}
+  /* 勉強タブ */
+  .streak-card {
+    background: linear-gradient(135deg, #3a1a5c 0%, #5c1a3a 100%);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    margin-bottom: 10px;
+    border: 1px solid #5a3a7c;
+  }
+  .streak-num {
+    font-size: 48px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+  }
+  .streak-label {
+    font-size: 11px;
+    color: #c8a8ff;
+    letter-spacing: 2px;
+    margin-top: 4px;
+    font-weight: 700;
+  }
+  .streak-sub {
+    font-size: 11px;
+    color: #aaa;
+    margin-top: 6px;
+  }
+  .slot-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .slot {
+    background: #232325;
+    border: 1px solid #2a2a2c;
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .slot.done { background: #1a3a2a; border-color: #2a5a3c; }
+  .slot-name { font-size: 11px; color: #888; letter-spacing: 1px; font-weight: 700; margin-bottom: 4px; }
+  .slot-detail { font-size: 12px; color: #aaa; }
+  .slot.done .slot-name { color: #4ade80; }
+  .slot-check { float: right; }
 
-/* INNER TABS */
-.inner-tabs{display:flex;padding:10px 14px 0;}
-.it{flex:1;padding:8px 4px;background:none;border:none;border-bottom:2px solid var(--border);color:var(--t2);font-size:10px;font-weight:900;letter-spacing:.04em;transition:all .15s;cursor:pointer;}
-.it.on{color:var(--orange);border-bottom-color:var(--orange);}
-.ipanel{display:none;}
-.ipanel.on{display:block;}
+  /* 生活タブ */
+  .promise-row {
+    background: #2a2a2c;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .promise-time {
+    font-size: 11px;
+    color: #4a90e2;
+    font-weight: 700;
+    min-width: 38px;
+  }
+  .promise-text { flex: 1; font-size: 13px; color: #ddd; }
+  .promise-row.done .promise-text { text-decoration: line-through; color: #666; }
+  .yakusoku-counter {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .yk-card {
+    background: #232325;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #2a2a2c;
+  }
+  .yk-num { font-size: 22px; font-weight: 800; color: #fff; }
+  .yk-num.ok { color: #4ade80; }
+  .yk-num.ng { color: #ef5a5a; }
+  .yk-lbl { font-size: 10px; color: #888; letter-spacing: 1px; margin-top: 2px; }
 
-/* RANK */
-.rank{font-size:24px;font-weight:900;line-height:1;}
-.ra{color:var(--green);}
-.rb{color:var(--yellow);}
-.rc{color:var(--t2);}
+  /* ADHDタブ */
+  .trigger-pill {
+    display: inline-block;
+    background: #2a2a2c;
+    border: 1px solid #3a3a3c;
+    border-radius: 14px;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: #ccc;
+    margin: 2px;
+  }
 
-/* FILTER CHIPS */
-.chips{display:flex;gap:6px;padding:9px 14px 0;overflow-x:auto;scrollbar-width:none;}
-.chips::-webkit-scrollbar{display:none;}
-.chip{flex-shrink:0;padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--t2);font-size:9.5px;font-weight:900;letter-spacing:.04em;transition:all .15s;cursor:pointer;}
-.chip.on{background:var(--orange);border-color:var(--orange);color:#000;}
+  /* ルール（折りたたみで保管） */
+  .rule-text {
+    background: #232325;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: #bbb;
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+  .rule-text strong { color: #f5a623; }
 
-/* MONEY */
-.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:12px 14px 0;}
-.mc{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:12px;}
-.mc-label{font-size:9px;font-weight:900;color:var(--t2);letter-spacing:.1em;margin-bottom:5px;}
-.mc-total{font-size:22px;font-weight:900;}
-.green{color:var(--green);}
-.red{color:var(--red);}
-.mc-items{margin-top:6px;}
-.mi{font-size:11px;font-weight:700;color:var(--t2);padding:4px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:4px;}
-.mi:last-child{border-bottom:none;}
-.mi-del{background:none;border:none;color:var(--t3);font-size:12px;cursor:pointer;padding:0 2px;flex-shrink:0;}
-.m-add{width:100%;margin-top:7px;background:none;border:1px dashed var(--border);color:var(--t3);font-size:9px;font-weight:900;border-radius:8px;padding:7px;cursor:pointer;letter-spacing:.04em;transition:all .15s;}
-.m-add:active{border-color:var(--orange);color:var(--orange);}
-/* 週次確認 */
-.money-check-row{margin:10px 14px 0;display:flex;align-items:center;gap:8px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;}
-.money-check-label{flex:1;font-size:11px;font-weight:900;color:var(--t2);}
-.money-check-label.alert{color:var(--red);}
-.money-check-btn{padding:6px 12px;border-radius:7px;border:none;background:var(--s2);color:var(--t2);font-size:10px;font-weight:900;cursor:pointer;transition:all .15s;letter-spacing:.04em;flex-shrink:0;}
-.money-check-btn:active{background:var(--green);color:#000;}
+  /* ゴミ箱 */
+  .trash-banner {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2a2a2c;
+    border: 1px solid #4a4a4c;
+    border-radius: 20px;
+    padding: 8px 14px;
+    font-size: 12px;
+    color: #ccc;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 200;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    animation: slideup 0.2s;
+  }
+  @keyframes slideup {
+    from { opacity: 0; transform: translate(-50%, 10px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+  }
+  .undo-btn {
+    background: #4a90e2;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+  }
 
-/* RULE CARD */
-.rc-card{margin:0 14px 9px;background:var(--s1);border-left:3px solid var(--orange);border-radius:0 var(--r) var(--r) 0;padding:11px 13px;}
-.rc-card.y{border-left-color:var(--yellow);}
-.rc-card.g{border-left-color:var(--green);}
-.rc-card.b{border-left-color:var(--blue);}
-.rc-card.p{border-left-color:var(--purple);}
-.rc-title{font-size:9px;font-weight:900;letter-spacing:.12em;color:var(--orange);margin-bottom:7px;}
-.rc-card.y .rc-title{color:var(--yellow);}
-.rc-card.g .rc-title{color:var(--green);}
-.rc-card.b .rc-title{color:var(--blue);}
-.rc-card.p .rc-title{color:var(--purple);}
-.rc-card p{font-size:12px;font-weight:500;color:var(--t2);line-height:2.1;}
-.rc-card p b{color:var(--text);font-weight:900;}
+  /* モーダル（編集・振り分け） */
+  .modal-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 300;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal {
+    background: #1c1c1e;
+    border-radius: 16px 16px 0 0;
+    padding: 16px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    border-top: 1px solid #3a3a3c;
+  }
+  .modal-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .modal-input {
+    width: 100%;
+    background: #2a2a2c;
+    border: 1px solid #3a3a3c;
+    border-radius: 8px;
+    padding: 10px;
+    color: #fff;
+    font-size: 14px;
+    min-height: 80px;
+    resize: vertical;
+    margin-bottom: 10px;
+  }
+  .move-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin: 10px 0;
+  }
+  .move-btn {
+    background: #2a2a2c;
+    border: 1px solid #3a3a3c;
+    border-radius: 8px;
+    padding: 10px;
+    color: #ddd;
+    font-size: 12px;
+    text-align: left;
+  }
+  .move-btn:hover { background: #3a3a3c; }
+  .modal-footer {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 10px;
+  }
+  .modal-btn {
+    background: #4a90e2;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .modal-btn.secondary { background: #3a3a3c; color: #aaa; }
+  .modal-btn.danger { background: #ef5a5a; }
 
-/* STUDY */
-.study-streak{margin:12px 14px 0;background:rgba(191,90,242,.1);border:1px solid rgba(191,90,242,.25);border-radius:var(--r);padding:11px 13px;display:flex;align-items:center;gap:11px;}
-.streak-n{font-size:30px;font-weight:900;color:var(--purple);}
-.streak-label{font-size:11px;font-weight:900;color:var(--t2);}
-.streak-sub{font-size:10px;color:var(--t3);font-weight:700;margin-top:2px;}
-.slot-list{margin:0 14px;}
-.slot{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:11px;display:flex;align-items:center;gap:9px;margin-bottom:7px;transition:border-color .15s;}
-.slot.done-slot{border-color:var(--purple);background:rgba(191,90,242,.06);}
-.slot-icon{font-size:19px;flex-shrink:0;}
-.slot-body{flex:1;}
-.slot-name{font-size:12px;font-weight:900;}
-.slot-desc{font-size:10px;color:var(--t2);font-weight:700;margin-top:2px;line-height:1.5;}
-.slot-btn{padding:6px 9px;border-radius:7px;border:none;background:var(--s2);color:var(--t2);font-size:10px;font-weight:900;flex-shrink:0;transition:all .15s;cursor:pointer;}
-.slot-btn.done-slot-btn{background:rgba(191,90,242,.2);color:var(--purple);}
-.study-memo-box{margin:0 14px 9px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:12px;}
-.smb-label{font-size:9px;font-weight:900;color:var(--t2);letter-spacing:.12em;margin-bottom:6px;}
-.smb-ta{width:100%;background:none;border:none;outline:none;color:var(--text);font-size:12px;font-weight:500;line-height:1.8;resize:none;min-height:80px;}
-.smb-save{width:100%;margin-top:7px;background:var(--s2);border:1px solid var(--border);color:var(--t2);font-size:10px;font-weight:900;border-radius:8px;padding:8px;cursor:pointer;letter-spacing:.04em;transition:all .15s;}
-.smb-save:active{border-color:var(--purple);color:var(--purple);}
+  /* リンクバー */
+  .linkbar {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 8px 12px 4px;
+    scrollbar-width: none;
+  }
+  .linkbar::-webkit-scrollbar { display: none; }
+  .linkbtn {
+    flex-shrink: 0;
+    background: #2a2a2c;
+    border: 1px solid #3a3a3c;
+    color: #ccc;
+    padding: 6px 12px;
+    border-radius: 14px;
+    font-size: 11px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
 
-/* DUMP - タブ型 */
-.dump-tabs{display:flex;gap:0;padding:10px 14px 0;}
-.dt{flex:1;padding:8px 4px;background:none;border:none;border-bottom:2px solid var(--border);color:var(--t2);font-size:10px;font-weight:900;letter-spacing:.04em;transition:all .15s;cursor:pointer;}
-.dt.on{color:var(--orange);border-bottom-color:var(--orange);}
-.dpanel{display:none;padding:10px 14px 0;}
-.dpanel.on{display:block;}
-.dump-box{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:12px;}
-.dump-label{font-size:9px;font-weight:900;color:var(--t2);letter-spacing:.12em;margin-bottom:6px;}
-.dump-ta{width:100%;background:none;border:none;outline:none;color:var(--text);font-size:13px;font-weight:400;line-height:1.9;resize:none;min-height:110px;}
-.dump-save{width:100%;margin-top:8px;background:var(--s1);border:1px solid var(--border);color:var(--t2);font-size:11px;font-weight:900;border-radius:var(--r);padding:10px;cursor:pointer;letter-spacing:.04em;transition:all .15s;}
-.dump-save:active{border-color:var(--orange);color:var(--orange);}
+  /* タスク化バッジ（全部ここ → タスク化したもの） */
+  .promoted-badge {
+    display: inline-block;
+    background: #1a3a5c;
+    color: #7ac0ff;
+    padding: 1px 6px;
+    border-radius: 6px;
+    font-size: 9px;
+    margin-left: 4px;
+    font-weight: 700;
+  }
 
-/* TRIGGER */
-.trig-header{padding:12px 15px 7px;font-size:9px;font-weight:900;color:var(--t2);letter-spacing:.13em;display:flex;align-items:center;justify-content:space-between;}
-.edit-toggle-btn{background:var(--s1);border:1px solid var(--border);border-radius:6px;padding:4px 10px;color:var(--t2);font-size:9px;font-weight:900;cursor:pointer;letter-spacing:.04em;}
-.edit-bar{display:none;background:rgba(255,107,0,.1);border:1px solid var(--orange);border-radius:var(--r);margin:0 14px 9px;padding:9px 12px;align-items:center;gap:7px;}
-.edit-bar.show{display:flex;}
-.edit-label{font-size:10px;font-weight:900;color:var(--orange);flex:1;letter-spacing:.04em;}
-.edit-done-btn{padding:5px 13px;border-radius:7px;border:none;background:var(--orange);color:#000;font-size:10px;font-weight:900;cursor:pointer;}
-.trig{display:flex;align-items:flex-start;gap:9px;padding:9px 11px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r);margin:0 14px 6px;}
-.trig-arrow{font-size:10px;font-weight:900;color:var(--orange);flex-shrink:0;padding-top:2px;letter-spacing:.04em;}
-.trig-body{flex:1;}
-.trig-when{font-size:11px;font-weight:900;color:var(--text);}
-.trig-then{font-size:11px;font-weight:700;color:var(--t2);margin-top:2px;}
-.trig-del{background:none;border:none;color:var(--t3);font-size:14px;cursor:pointer;flex-shrink:0;padding:0 3px;transition:color .1s;}
-.trig-del:active{color:var(--red);}
-.trig-add-row{display:none;margin:0 14px 9px;background:var(--s1);border:1px dashed var(--border);border-radius:var(--r);padding:10px 11px;gap:7px;align-items:center;}
-.trig-add-row.show{display:flex;}
-.trig-inputs{flex:1;display:flex;flex-direction:column;gap:5px;}
-.trig-inp{background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:7px 9px;color:var(--text);font-size:12px;font-weight:700;outline:none;width:100%;}
-.trig-inp:focus{border-color:var(--orange);}
-.trig-inp::placeholder{color:var(--t3);}
+  /* 仕事タブの3列 */
+  .work-cols {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
 
-/* ACCORDION */
-.accord-btn{width:calc(100% - 28px);margin:0 14px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:10px 13px;color:var(--t2);font-size:10px;font-weight:900;text-align:left;letter-spacing:.04em;cursor:pointer;}
-.accord-panel{display:none;margin-top:7px;}
+  /* 持ち越し表示 */
+  .carryover {
+    background: #3a2a1a;
+    color: #f5a623;
+    padding: 1px 6px;
+    border-radius: 6px;
+    font-size: 9px;
+    margin-left: 4px;
+    font-weight: 700;
+  }
 
-/* MODAL */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:200;align-items:flex-end;justify-content:center;}
-.overlay.open{display:flex;}
-.modal{background:var(--s1);border-radius:18px 18px 0 0;width:100%;max-width:430px;padding:19px 15px calc(22px + env(safe-area-inset-bottom,0px));animation:sup .22s ease;}
-@keyframes sup{from{transform:translateY(100%);}to{transform:translateY(0);}}
-.modal-title{font-size:16px;font-weight:900;margin-bottom:14px;}
-.mrow{margin-bottom:10px;}
-.mlabel{font-size:9px;font-weight:900;color:var(--t2);letter-spacing:.1em;margin-bottom:5px;}
-.minput{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 11px;color:var(--text);font-size:13px;font-weight:700;outline:none;}
-.minput:focus{border-color:var(--orange);}
-.mbtns{display:flex;gap:7px;margin-top:13px;}
-.mbtn{flex:1;padding:12px;border-radius:10px;border:none;font-size:12px;font-weight:900;cursor:pointer;letter-spacing:.04em;transition:transform .1s;}
-.mbtn:active{transform:scale(.97);}
-.mprimary{background:var(--orange);color:#000;}
-.mcancel{background:var(--s2);color:var(--t2);border:1px solid var(--border);}
-
-::-webkit-scrollbar{width:3px;}
-::-webkit-scrollbar-track{background:var(--bg);}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+  /* ヘルプテキスト */
+  .helper {
+    font-size: 11px;
+    color: #666;
+    padding: 4px 4px 8px;
+    line-height: 1.5;
+  }
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════
-  今これ
-══════════════════════════ -->
-<div class="sc on" id="sc-now">
-  <div class="ph">
-    <div class="ph-title">今これをやれ</div>
-    <div class="ph-sub" id="date-label"></div>
+<!-- ===== 固定ヘッダー ===== -->
+<div class="fixed-top">
+  <!-- リンクバー -->
+  <div class="linkbar">
+    <a href="https://docs.google.com/spreadsheets/d/1kRYb53ksWvFzygkGPhrZL_eaLcm7IPabjJUrlt53Dug/edit?gid=1665001299" class="linkbtn" target="_blank">📊 シート</a>
+    <a href="googlecalendar://" class="linkbtn">📅 カレンダー</a>
+    <a href="mobilenotes://" class="linkbtn">📝 メモ</a>
+    <a href="googlegmail://" class="linkbtn">✉️ Gmail</a>
+    <a href="shortcuts://run-shortcut?name=Routinely%E9%96%8B%E3%81%8F" class="linkbtn">🔄 Routinely</a>
   </div>
 
-  <!-- アプリリンク -->
-  <div class="app-bar">
-    <a class="app-link" href="#" onclick="openRoutinely();return false;">
-      <span class="app-link-icon">⏰</span>Routinely
-    </a>
-    <a class="app-link" href="https://docs.google.com/spreadsheets/d/1kRYb53ksWvFzygkGPhrZL_eaLcm7IPabjJUrlt53Dug/edit?gid=1665001299#gid=1665001299" target="_blank">
-      <span class="app-link-icon">📊</span>スプシ
-    </a>
-    <a class="app-link" href="https://calendar.google.com" target="_blank">
-      <span class="app-link-icon">📅</span>カレンダー
-    </a>
-    <a class="app-link" href="https://mail.google.com" target="_blank">
-      <span class="app-link-icon">📧</span>Gmail
-    </a>
-    <a class="app-link" href="https://drive.google.com" target="_blank">
-      <span class="app-link-icon">💾</span>Drive
-    </a>
-  </div>
-
-  <!-- 今日の3つ決め -->
-  <div class="three-box">
-    <div class="three-box-title">▶ 今日これだけやる（3つだけ）</div>
-    <div class="three-row">
-      <span class="three-num">1</span>
-      <input class="three-input" id="t1" placeholder="一番大事なやつ">
-    </div>
-    <div class="three-row">
-      <span class="three-num">2</span>
-      <input class="three-input" id="t2" placeholder="次に大事なやつ">
-    </div>
-    <div class="three-row">
-      <span class="three-num">3</span>
-      <input class="three-input" id="t3" placeholder="余裕があれば">
-    </div>
-    <button class="three-save" onclick="saveThree()">保存する</button>
-  </div>
-
-  <!-- NOW -->
-  <div class="now-block">
-    <div class="now-eyebrow">▶ 今やってること（これだけ）</div>
-    <div class="now-empty" id="now-empty">下の ▶ を押す</div>
-    <div class="now-task" id="now-text" style="display:none"></div>
-    <div class="now-actions" id="now-acts" style="display:none">
-      <button class="now-btn now-done" onclick="doneNow()">✓ 完了</button>
-      <button class="now-btn now-stop" onclick="clearNow()">中断</button>
+  <!-- 全部ここ入力バー -->
+  <div class="quickbar">
+    <textarea id="quickInput" class="quickbar-input" placeholder="頭にあることを書け（改行OK・長文OK）" rows="1"></textarea>
+    <div class="quickbar-tags">
+      <button class="qtag active" data-tag="なんでも">なんでも</button>
+      <button class="qtag" data-tag="突発">突発</button>
+      <button class="qtag" data-tag="悩み">悩み</button>
+      <button class="qtag" data-tag="思いつき">思いつき</button>
+      <button class="qtag-send" id="quickSend">入れる</button>
     </div>
   </div>
 
-  <div class="sl"><span class="sl-dot" style="background:var(--red)"></span>① 絶対やる</div>
-  <div id="g-must"></div>
-  <div class="sl"><span class="sl-dot" style="background:var(--yellow)"></span>② できたら</div>
-  <div id="g-should"></div>
-  <div class="sl"><span class="sl-dot" style="background:var(--t3)"></span>③ 余裕あれば</div>
-  <div id="g-could"></div>
-
-  <div class="div"></div>
-  <div style="padding:0 14px">
-    <div class="add-row">
-      <input class="ai" id="task-input" placeholder="タスクを追加...">
-      <select class="asel" id="task-pri">
-        <option value="must">①絶対</option>
-        <option value="should">②できたら</option>
-        <option value="could">③余裕</option>
-      </select>
-      <button class="a-btn" onclick="addTask()">＋</button>
+  <!-- NOWカード -->
+  <div class="now-card" id="nowCard">
+    <div class="now-label">▶ 今これをやれ</div>
+    <div class="now-text now-empty" id="nowText">タップして「今やってること」を1つだけ書く</div>
+    <div class="now-actions" id="nowActions" style="display:none;">
+      <button class="now-btn" id="nowDone">✓ 終わった</button>
+      <button class="now-btn" id="nowClear">クリア</button>
     </div>
   </div>
 
-  <!-- 判断ルール（折りたたみ） -->
-  <div style="margin:11px 0 0">
-    <button class="accord-btn" id="judge-btn" onclick="toggleAccord('judge-panel','judge-btn')">▸ 迷ったら開く：判断ルール</button>
-    <div class="accord-panel" id="judge-panel" style="margin:7px 14px 0">
-      <div class="rc-card y" style="margin:0 0 7px">
-        <div class="rc-title">🔀 どこに入れるか迷ったら</div>
-        <p><b>5分以内で終わる？</b> → 今やる（▶）<br><b>今日中に必要？</b> → ①絶対へ<br><b>誰か絡んでる？</b> → 仕事＞待ちへ<br><b>それ以外</b> → 仕事＞未来へ<br><b>俺じゃないと無理？</b> → YES→やる / NO→振る</p>
-      </div>
-      <div class="rc-card" style="margin:0">
-        <div class="rc-title">⚡ 絶対ルール</div>
-        <p><b>今やってることは1つだけ</b><br>ながら禁止 / 完璧にやらない<br>来たものに即反応しない<br>迷ったらこのメモを開く</p>
-      </div>
-    </div>
-  </div>
-  <div style="height:13px"></div>
-</div>
-
-<!-- ══════════════════════════
-  仕事
-══════════════════════════ -->
-<div class="sc" id="sc-shigoto">
-  <div class="ph">
-    <div class="ph-title">仕事</div>
-    <div class="ph-sub">待ち / 未来 / お金</div>
-  </div>
-  <div class="inner-tabs">
-    <button class="it on" onclick="switchInner('machi',this)">⏳ 待ち</button>
-    <button class="it" onclick="switchInner('mirai',this)">🚀 未来</button>
-    <button class="it" onclick="switchInner('okane',this)">💴 お金</button>
+  <!-- 今日絶対やる3つ -->
+  <div class="today3">
+    <div class="today3-label">⭐ 今日絶対やる3つ</div>
+    <div id="today3List"></div>
   </div>
 
-  <!-- 待ち -->
-  <div class="ipanel on" id="ip-machi">
-    <div class="sl"><span class="sl-dot" style="background:var(--yellow)"></span>連絡待ち<span style="font-size:9px;color:var(--t3);font-weight:700;margin-left:4px">（返信・電話折り返し・返事）</span></div>
-    <div id="w-reply"></div>
-    <div class="sl"><span class="sl-dot" style="background:var(--green)"></span>頼んだこと<span style="font-size:9px;color:var(--t3);font-weight:700;margin-left:4px">（お願いした作業・依頼）</span></div>
-    <div id="w-order"></div>
-    <div class="sl"><span class="sl-dot" style="background:var(--blue)"></span>外注中<span style="font-size:9px;color:var(--t3);font-weight:700;margin-left:4px">（職人・業者に出してる作業）</span></div>
-    <div id="w-outer"></div>
-    <div class="div"></div>
-    <div style="padding:0 14px">
-      <div class="add-row">
-        <input class="ai" id="wait-input" placeholder="追加...">
-        <select class="asel" id="wait-type">
-          <option value="reply">連絡待ち</option>
-          <option value="order">頼んだこと</option>
-          <option value="outer">外注中</option>
-        </select>
-        <button class="a-btn" onclick="addWait()">＋</button>
-      </div>
-    </div>
-    <!-- クイックタスク -->
-    <div style="padding:7px 14px 0">
-      <div class="add-row" style="border-color:rgba(255,107,0,.3)">
-        <input class="ai" id="qt-wait" placeholder="→ タスクにする（画面移動なしで追加）">
-        <select class="asel" id="qt-wait-pri">
-          <option value="must">①絶対</option>
-          <option value="should">②できたら</option>
-          <option value="could">③余裕</option>
-        </select>
-        <button class="a-btn" onclick="quickTask('qt-wait','qt-wait-pri')">✓</button>
-      </div>
-    </div>
-    <div style="height:12px"></div>
-    <div class="rc-card y">
-      <div class="rc-title">📌 待ちルール</div>
-      <p>誰か絡んでる → ここへ<br>反応きたら → 今これ か 未来 へ振る<br>1週間動きなし → 催促 or 捨てる<br><b>外注中</b> = 職人・業者に出した仕事の確認用</p>
-    </div>
+  <!-- メインタブ -->
+  <div class="tab-section-label">⚡ メイン</div>
+  <div class="tabs" id="mainTabs">
+    <button class="tab main active" data-tab="zenbu">全部ここ<span class="badge" id="bz">0</span></button>
+    <button class="tab main" data-tab="shigoto">仕事<span class="badge" id="bs">0</span></button>
+    <button class="tab main" data-tab="okane">お金<span class="badge" id="bo">0</span></button>
+    <button class="tab main" data-tab="eigyou">営業<span class="badge" id="be">0</span></button>
   </div>
 
-  <!-- 未来 -->
-  <div class="ipanel" id="ip-mirai">
-    <div class="chips" id="future-chips">
-      <button class="chip on" onclick="setFC('all',this)">全部</button>
-      <button class="chip" onclick="setFC('sales',this)">営業</button>
-      <button class="chip" onclick="setFC('site',this)">現場・職人</button>
-      <button class="chip" onclick="setFC('money',this)">お金・請求</button>
-      <button class="chip" onclick="setFC('plan',this)">段取り</button>
-      <button class="chip" onclick="setFC('misc',this)">その他</button>
-    </div>
-    <div style="margin-top:9px">
-      <div class="sl">
-        <span class="rank ra">A</span>
-        <div>
-          <div style="font-size:10px;font-weight:900;color:var(--t2);letter-spacing:.07em">今動いてる</div>
-          <div style="font-size:9px;color:var(--t3);font-weight:700">営業・現場・請求、今進行中のもの全部</div>
-        </div>
-      </div>
-      <div id="f-a"></div>
-      <div class="div"></div>
-      <div class="sl">
-        <span class="rank rb">B</span>
-        <div>
-          <div style="font-size:10px;font-weight:900;color:var(--t2);letter-spacing:.07em">仕込み中</div>
-          <div style="font-size:9px;color:var(--t3);font-weight:700">見積出した・段取り考えてる・準備してるもの</div>
-        </div>
-      </div>
-      <div id="f-b"></div>
-      <div class="div"></div>
-      <div class="sl">
-        <span class="rank rc">C</span>
-        <div>
-          <div style="font-size:10px;font-weight:900;color:var(--t2);letter-spacing:.07em">いつかやる</div>
-          <div style="font-size:9px;color:var(--t3);font-weight:700">今すぐじゃないけど忘れたくないもの全部</div>
-        </div>
-      </div>
-      <div id="f-c"></div>
-    </div>
-    <div class="div"></div>
-    <div style="padding:0 14px">
-      <div class="add-row">
-        <input class="ai" id="future-input" placeholder="案件・種まき追加...">
-        <select class="asel" id="future-rank">
-          <option value="a">A 動いてる</option>
-          <option value="b">B 仕込み</option>
-          <option value="c">C いつか</option>
-        </select>
-        <select class="asel" id="future-cat">
-          <option value="sales">営業</option>
-          <option value="site">現場</option>
-          <option value="money">お金</option>
-          <option value="plan">段取り</option>
-          <option value="misc">その他</option>
-        </select>
-        <button class="a-btn" onclick="addFuture()">＋</button>
-      </div>
-    </div>
-    <!-- クイックタスク -->
-    <div style="padding:7px 14px 0">
-      <div class="add-row" style="border-color:rgba(255,107,0,.3)">
-        <input class="ai" id="qt-future" placeholder="→ タスクにする（画面移動なしで追加）">
-        <select class="asel" id="qt-future-pri">
-          <option value="must">①絶対</option>
-          <option value="should">②できたら</option>
-          <option value="could">③余裕</option>
-        </select>
-        <button class="a-btn" onclick="quickTask('qt-future','qt-future-pri')">✓</button>
-      </div>
-    </div>
-    <div style="height:12px"></div>
-    <div class="rc-card g">
-      <div class="rc-title">✅ 仕事判断</div>
-      <p>利益出る？ 楽？ 繋がる？<br><b>YES多い → やる　NO多い → やらない</b><br>毎日夜に必ずA/B/Cを触る</p>
-    </div>
-  </div>
-
-  <!-- お金 -->
-  <div class="ipanel" id="ip-okane">
-    <!-- 週次確認 -->
-    <div class="money-check-row">
-      <div class="money-check-label" id="money-check-label">未回収・未請求の最終確認日：未設定</div>
-      <button class="money-check-btn" onclick="confirmMoneyCheck()">確認した ✓</button>
-    </div>
-    <div class="mgrid">
-      <div class="mc">
-        <div class="mc-label">今月入る</div>
-        <div class="mc-total green" id="mt-in">¥0</div>
-        <div class="mc-items" id="ml-in"></div>
-        <button class="m-add" onclick="openMM('in')">＋ 追加</button>
-      </div>
-      <div class="mc">
-        <div class="mc-label">来月入る</div>
-        <div class="mc-total" id="mt-next">¥0</div>
-        <div class="mc-items" id="ml-next"></div>
-        <button class="m-add" onclick="openMM('next')">＋ 追加</button>
-      </div>
-      <div class="mc">
-        <div class="mc-label">⚠ 未回収</div>
-        <div class="mc-total red" id="mt-unc">¥0</div>
-        <div class="mc-items" id="ml-unc"></div>
-        <button class="m-add" onclick="openMM('unc')">＋ 追加</button>
-      </div>
-      <div class="mc">
-        <div class="mc-label">🔥 未請求→即請求</div>
-        <div class="mc-total red" id="mt-unb">¥0</div>
-        <div class="mc-items" id="ml-unb"></div>
-        <button class="m-add" onclick="openMM('unb')">＋ 追加</button>
-      </div>
-    </div>
-    <div class="div"></div>
-    <div class="rc-card">
-      <div class="rc-title">💴 金ルール</div>
-      <p>未請求は即請求<br>終わったら翌日請求<br>未回収は週1確認<br>迷ったら請求する</p>
-    </div>
+  <!-- サブタブ -->
+  <div class="tab-section-label">🔄 サブ</div>
+  <div class="tabs" id="subTabs">
+    <button class="tab sub" data-tab="seikatsu">生活<span class="badge" id="bk">0</span></button>
+    <button class="tab sub" data-tab="benkyou">勉強<span class="badge" id="bb">0</span></button>
+    <button class="tab sub" data-tab="adhd">ADHD<span class="badge" id="ba">0</span></button>
+    <button class="tab sub" data-tab="rule">ルール</button>
   </div>
 </div>
 
-<!-- ══════════════════════════
-  勉強
-══════════════════════════ -->
-<div class="sc" id="sc-study">
-  <div class="ph">
-    <div class="ph-title">勉強</div>
-    <div class="ph-sub">宅建・施工管理技士・建設業系資格</div>
-  </div>
-  <div class="study-streak">
-    <div class="streak-n" id="streak-n">0</div>
-    <div>
-      <div class="streak-label">日連続 🔥</div>
-      <div class="streak-sub">最低5分でカウント / 完璧にやらない</div>
-    </div>
-  </div>
-  <div class="sl"><span class="sl-dot" style="background:var(--purple)"></span>今日の勉強スロット</div>
-  <div class="slot-list">
-    <div class="slot" id="sl-car">
-      <div class="slot-icon">🚗</div>
-      <div class="slot-body">
-        <div class="slot-name">移動中（車・音声のみ）</div>
-        <div class="slot-desc">復習だけ。新しい内容は夜にやる。<br>問題を声に出す / 音声教材</div>
-      </div>
-      <button class="slot-btn" id="sb-car" onclick="toggleSlot('car')">未</button>
-    </div>
-    <div class="slot" id="sl-night">
-      <div class="slot-icon">🌙</div>
-      <div class="slot-body">
-        <div class="slot-name">夜（メイン）30〜60分</div>
-        <div class="slot-desc">テキスト精読 / 問題集 / まとめ<br>ここをやったら連続日数カウント</div>
-      </div>
-      <button class="slot-btn" id="sb-night" onclick="toggleSlot('night')">未</button>
-    </div>
-    <div class="slot" id="sl-gap">
-      <div class="slot-icon">⚡</div>
-      <div class="slot-body">
-        <div class="slot-name">隙間（5〜15分）</div>
-        <div class="slot-desc">単語帳 / 過去問1問 / 暗記カード</div>
-      </div>
-      <button class="slot-btn" id="sb-gap" onclick="toggleSlot('gap')">未</button>
-    </div>
-    <div class="slot" id="sl-morning">
-      <div class="slot-icon">🌅</div>
-      <div class="slot-body">
-        <div class="slot-name">朝 or 寝る前（5分）</div>
-        <div class="slot-desc">昨日の復習だけ / 見るだけでもOK</div>
-      </div>
-      <button class="slot-btn" id="sb-morning" onclick="toggleSlot('morning')">未</button>
-    </div>
-  </div>
-  <div class="sl"><span class="sl-dot" style="background:var(--purple)"></span>今日やったこと・気づき</div>
-  <div class="study-memo-box">
-    <div class="smb-label">MEMO</div>
-    <textarea class="smb-ta" id="study-memo" rows="4" placeholder="どの教材を何ページ・気づき・わからなかったところ..."></textarea>
-    <button class="smb-save" onclick="saveStudyMemo()">保存する</button>
-  </div>
-  <div class="div"></div>
-  <div class="rc-card p">
-    <div class="rc-title">📚 勉強ルール</div>
-    <p>車の中は復習だけ（新しい内容は夜）<br>最低5分は絶対やる / 完璧にやらない<br>繰り返しが全て / 勉強中はSNS禁止</p>
-  </div>
-</div>
+<!-- ===== コンテンツエリア ===== -->
+<div class="content" id="content"></div>
 
-<!-- ══════════════════════════
-  全部ここ（ダンプ＋トリガー＋ルール）
-══════════════════════════ -->
-<div class="sc" id="sc-dump">
-  <div class="ph">
-    <div class="ph-title">全部ここ</div>
-    <div class="ph-sub">頭に残さない / 迷ったら書く</div>
-  </div>
+<!-- 取り消しバナー -->
+<div id="trashBanner"></div>
 
-  <!-- ダンプタブ：なんでもを最初に -->
-  <div class="dump-tabs">
-    <button class="dt on" onclick="switchDump('nandemo',this)">なんでも</button>
-    <button class="dt" onclick="switchDump('toppa',this)">突発</button>
-    <button class="dt" onclick="switchDump('nayami',this)">悩み</button>
-    <button class="dt" onclick="switchDump('omoi',this)">思いつき</button>
-  </div>
-  <div class="dpanel on" id="dp-nandemo">
-    <div class="dump-box">
-      <div class="dump-label">▶ なんでも — 迷ったらここ！（一番速い）</div>
-      <textarea class="dump-ta" id="dump-nandemo" placeholder="とにかく書く。整理しない。Appleメモからもここへ移す。&#10;夜に振り分けるだけでいい。"></textarea>
-    </div>
-    <button class="dump-save" onclick="saveDump('nandemo')">保存する</button>
-    <div class="quick-task-bar" style="margin-top:8px">
-      <div class="add-row">
-        <input class="ai" id="qt-dump" placeholder="→ タスクにする">
-        <select class="asel" id="qt-dump-pri">
-          <option value="must">①絶対</option>
-          <option value="should">②できたら</option>
-          <option value="could">③余裕</option>
-        </select>
-        <button class="a-btn" onclick="quickTask('qt-dump','qt-dump-pri')">✓</button>
-      </div>
-    </div>
-  </div>
-  <div class="dpanel" id="dp-toppa">
-    <div class="dump-box">
-      <div class="dump-label">▶ 突発・今来たやつ</div>
-      <textarea class="dump-ta" id="dump-toppa" placeholder="急に来たやつをとりあえず書く。後で振り分ける。"></textarea>
-    </div>
-    <button class="dump-save" onclick="saveDump('toppa')">保存する</button>
-    <div class="quick-task-bar" style="margin-top:8px">
-      <div class="add-row">
-        <input class="ai" id="qt-toppa" placeholder="→ タスクにする">
-        <select class="asel" id="qt-toppa-pri">
-          <option value="must">①絶対</option>
-          <option value="should">②できたら</option>
-          <option value="could">③余裕</option>
-        </select>
-        <button class="a-btn" onclick="quickTask('qt-toppa','qt-toppa-pri')">✓</button>
-      </div>
-    </div>
-  </div>
-  <div class="dpanel" id="dp-nayami">
-    <div class="dump-box">
-      <div class="dump-label">▶ 悩み・不安・モヤモヤ</div>
-      <textarea class="dump-ta" id="dump-nayami" placeholder="頭に残ったままにしない。書いたら頭から出す。"></textarea>
-    </div>
-    <button class="dump-save" onclick="saveDump('nayami')">保存する</button>
-  </div>
-  <div class="dpanel" id="dp-omoi">
-    <div class="dump-box">
-      <div class="dump-label">▶ 思いつき・アイデア・気づき</div>
-      <textarea class="dump-ta" id="dump-omoi" placeholder="完成してなくていい。とりあえず書く。"></textarea>
-    </div>
-    <button class="dump-save" onclick="saveDump('omoi')">保存する</button>
-    <div class="quick-task-bar" style="margin-top:8px">
-      <div class="add-row">
-        <input class="ai" id="qt-omoi" placeholder="→ タスクにする">
-        <select class="asel" id="qt-omoi-pri">
-          <option value="must">①絶対</option>
-          <option value="should">②できたら</option>
-          <option value="could">③余裕</option>
-        </select>
-        <button class="a-btn" onclick="quickTask('qt-omoi','qt-omoi-pri')">✓</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="div"></div>
-
-  <!-- トリガー -->
-  <div class="trig-header">
-    <div style="display:flex;align-items:center;gap:6px">
-      <span class="sl-dot" style="background:var(--orange)"></span>
-      トリガー（行動のきっかけ）
-    </div>
-    <button class="edit-toggle-btn" id="edit-toggle-btn" onclick="toggleEditMode()">✏ 編集</button>
-  </div>
-  <div class="edit-bar" id="edit-bar">
-    <span class="edit-label">✏ 編集モード：削除・追加できます</span>
-    <button class="edit-done-btn" onclick="toggleEditMode()">完了</button>
-  </div>
-  <div id="trigger-list"></div>
-  <div class="trig-add-row" id="trig-add-row">
-    <div class="trig-inputs">
-      <input class="trig-inp" id="trig-when-inp" placeholder="きっかけ（例：迷いが出た）">
-      <input class="trig-inp" id="trig-then-inp" placeholder="やること（例：全部ここに書く）">
-    </div>
-    <button class="a-btn" onclick="addTrigger()">＋</button>
-  </div>
-
-  <div class="div"></div>
-
-  <!-- ルール（折りたたみ） -->
-  <button class="accord-btn" id="rule-btn" onclick="toggleAccord('rule-panel','rule-btn')">▸ ルール・使い方（迷ったら開く）</button>
-  <div class="accord-panel" id="rule-panel" style="margin:7px 14px 0">
-    <div class="rc-card" style="margin:0 0 7px">
-      <div class="rc-title">⚡ 絶対ルール</div>
-      <p><b>迷ったらこのメモを開く</b><br>全部ここに書く（頭に残さない）<br>今やってることは1つだけ<br>ながら禁止 / 1日3つでいい<br>未来A/B/Cを毎日夜に触る<br>最低5分やる / 完璧にやらない<br><b>来たものに即反応しない（5秒考える）</b></p>
-    </div>
-    <div class="rc-card y" style="margin:0 0 7px">
-      <div class="rc-title">🔀 判断ルール</div>
-      <p><b>5分以内で終わる？</b> → 今やる<br><b>今日中に必要？</b> → ①絶対へ<br><b>誰か絡んでる？</b> → 待ちへ<br><b>それ以外</b> → 未来へ<br><b>俺じゃないと無理？</b> YES→やる / NO→振る<br>作業・雑務は基本振る</p>
-    </div>
-    <div class="rc-card g" style="margin:0 0 7px">
-      <div class="rc-title">🌙 夜の整理（1分だけ）</div>
-      <p>Appleメモ → なんでもタブへ移す<br>全部ここ → 振り分けるだけ<br>不要は消す / 考えない<br>未来A/B/Cを触る</p>
-    </div>
-    <div class="rc-card b" style="margin:0 0 7px">
-      <div class="rc-title">📂 仕事の全体分類</div>
-      <p>① 今やる（緊急・即対応）<br>② 今日やる（本日のタスク）<br>③ 待ち（依頼・連絡待ち）<br>④ 未来（売上・段取り）<br>⑤ 捨てる or 後回し</p>
-    </div>
-    <div class="rc-card g" style="margin:0 0 7px">
-      <div class="rc-title">✅ 仕事判断</div>
-      <p>利益出る？ 楽？ 繋がる？<br><b>YES多い → やる　NO多い → やらない</b></p>
-    </div>
-    <div class="rc-card y" style="margin:0 0 7px">
-      <div class="rc-title">📱 SNSルール</div>
-      <p>今やってる時は絶対禁止<br>見るなら隙間5分だけ<br>迷ったら見ない</p>
-    </div>
-    <div class="rc-card" style="margin:0">
-      <div class="rc-title">🛑 後手後手を防ぐルール</div>
-      <p><b>来たものに即反応しない</b><br>→ まず書いて、今やってることに戻る<br><b>気が逸れたと気づいたら</b><br>→ 今これ画面を開いて戻る<br><b>全部中途半端になりそうなら</b><br>→ 1個終わらせてから次へ</p>
-    </div>
-  </div>
-  <div style="height:13px"></div>
-</div>
-
-<!-- NAV -->
-<nav class="nav">
-  <button class="nb on" onclick="goTo('now',this)">
-    <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
-    今これ
-  </button>
-  <button class="nb" onclick="goTo('shigoto',this)">
-    <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-    仕事
-    <span class="dot" id="dot-shigoto"></span>
-  </button>
-  <button class="nb" onclick="goTo('study',this)">
-    <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-    勉強
-  </button>
-  <button class="nb" onclick="goTo('dump',this)">
-    <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-    全部ここ
-  </button>
-</nav>
-
-<!-- MONEY MODAL -->
-<div class="overlay" id="mm-overlay" onclick="if(event.target.id==='mm-overlay')closeMM()">
-  <div class="modal">
-    <div class="modal-title" id="mm-title">追加</div>
-    <div class="mrow">
-      <div class="mlabel">内容</div>
-      <input class="minput" id="mm-name" placeholder="例：○○現場 完工分">
-    </div>
-    <div class="mrow">
-      <div class="mlabel">金額（円）</div>
-      <input class="minput" id="mm-amount" type="number" placeholder="例：350000">
-    </div>
-    <div class="mbtns">
-      <button class="mbtn mcancel" onclick="closeMM()">キャンセル</button>
-      <button class="mbtn mprimary" onclick="saveMM()">追加する</button>
-    </div>
-  </div>
-</div>
+<!-- モーダル -->
+<div id="modalContainer"></div>
 
 <script>
-const KEY='ore-memo-v5';
-const GAS_URL='https://script.google.com/macros/s/AKfycby7qCAfVKcFGx48cBQlNO171qbFQeZ3b1hnAp5u0D4jCK5_pVxrIjCB3_bV2qZ-HOFEOA/exec';
-let S={
-  tasks:[],waits:[],futures:[],
-  money:{in:[],next:[],unc:[],unb:[]},
-  now:null,
-  three:{t1:'',t2:'',t3:''},
-  dump:{nayami:'',omoi:'',toppa:'',nandemo:''},
-  study:{slots:{car:false,night:false,gap:false,morning:false},memo:'',streak:0,lastNight:'',lastSlotDate:''},
-  moneyCheckDate:'',
-  triggers:[
-    {when:'起きた',then:'「今これ」を開いて今日の3つを書く'},
-    {when:'仕事・依頼が来た',then:'5秒止まる。今すぐ/今日/待ち/未来 のどれかに振る'},
-    {when:'車に乗った',then:'復習の音声だけ流す（新しい内容は夜）'},
-    {when:'現場に着いた',then:'作業前に5分だけ俯瞰する。段取り確認してから動く'},
-    {when:'喋り続けてると気づいた',then:'「今これ」を開いて今やることを確認する'},
-    {when:'今じゃないことやってると気づいた',then:'止めて書いて、今やることに戻る'},
-    {when:'完璧にやろうとしてると気づいた',then:'「完璧にやらない」と声に出して、とりあえず始める'},
-    {when:'気が逸れたと気づいた',then:'「今これ」画面を開いて戻る。1個終わらせてから次へ'},
-    {when:'全部中途半端になりそうなとき',then:'全部止めて1個だけ選んで終わらせる'},
-    {when:'お金の不安が頭に入ってきた',then:'「お金」画面を開いて現実確認して閉じる'},
-    {when:'悩み・思いつき・突発が来た',then:'「全部ここ」の該当タブに書く。考えるのは後'},
-    {when:'隙間時間ができた',then:'今日タスク or 待ちを処理する。SNSは見ない'},
-    {when:'現場作業に入りそうになった',then:'「これは俺じゃないとできない？」と自問する'},
-    {when:'1日の仕事が終わった',then:'未来A/B/Cを触る。夜の整理1分。Appleメモをここへ'},
-    {when:'寝る前',then:'軽く確認＋勉強5分。明日の1番をイメージする'},
-  ]
-};
-let futureFilter='all';
-let mmType='in';
-let editMode=false;
+// ========== ストレージ ==========
+const STORAGE_KEY = 'ore-no-memo-v7';
 
-function load(){
-  // まずローカルから即時読み込み（表示を速くする）
-  try{const d=localStorage.getItem(KEY);if(d){const p=JSON.parse(d);S=Object.assign(S,p);if(!S.dump||typeof S.dump==='string')S.dump={nayami:'',omoi:'',toppa:'',nandemo:''};if(!S.three)S.three={t1:'',t2:'',t3:''};}}catch(e){}
-  // クラウドからも読み込んで上書き
-  fetch(GAS_URL+'?action=load')
-    .then(r=>r.json())
-    .then(p=>{
-      if(p&&Object.keys(p).length>0){
-        S=Object.assign(S,p);
-        if(!S.dump||typeof S.dump==='string')S.dump={nayami:'',omoi:'',toppa:'',nandemo:''};
-        if(!S.three)S.three={t1:'',t2:'',t3:''};
-        localStorage.setItem(KEY,JSON.stringify(S));
-        // 画面を再描画
-        dailyReset();loadThree();loadDumps();
-        renderTasks();renderWait();renderFuture();renderMoney();renderStudy();renderTriggers();
-        showSyncStatus('✓ クラウドから読み込み完了');
-      }
-    })
-    .catch(()=>showSyncStatus('オフライン（ローカルデータを使用中）'));
-}
-
-function save(){
-  // ローカルにも保存（オフライン対応）
-  try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
-  // クラウドにも保存
-  const data=JSON.stringify(S);
-  fetch(GAS_URL+'?action=save&data='+encodeURIComponent(data))
-    .then(r=>r.text())
-    .then(()=>showSyncStatus('✓ 保存完了'))
-    .catch(()=>showSyncStatus('オフライン（ローカルに保存済み）'));
-}
-
-function showSyncStatus(msg){
-  let el=document.getElementById('sync-status');
-  if(!el){
-    el=document.createElement('div');
-    el.id='sync-status';
-    el.style.cssText='position:fixed;top:env(safe-area-inset-top,0);left:0;right:0;background:rgba(0,200,83,.9);color:#000;font-size:11px;font-weight:900;text-align:center;padding:4px;z-index:999;transition:opacity .5s;';
-    document.body.appendChild(el);
-  }
-  el.textContent=msg;
-  el.style.opacity='1';
-  setTimeout(()=>el.style.opacity='0',2000);
-}
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function uid(){return Date.now()+Math.floor(Math.random()*9999);}
-function todayStr(){const d=new Date();return`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;}
-function fmtDate(){const d=new Date();const w=['日','月','火','水','木','金','土'];return`${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} (${w[d.getDay()]})`;}
-
-// SCREEN
-function goTo(id,btn){
-  document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
-  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
-  document.getElementById('sc-'+id).classList.add('on');
-  btn.classList.add('on');
-  window.scrollTo(0,0);
-}
-function switchInner(id,btn){
-  document.querySelectorAll('.ipanel').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.it').forEach(b=>b.classList.remove('on'));
-  document.getElementById('ip-'+id).classList.add('on');
-  btn.classList.add('on');
-}
-function switchDump(id,btn){
-  document.querySelectorAll('.dpanel').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.dt').forEach(b=>b.classList.remove('on'));
-  document.getElementById('dp-'+id).classList.add('on');
-  btn.classList.add('on');
-}
-function toggleAccord(panelId,btnId){
-  const p=document.getElementById(panelId);
-  const b=document.getElementById(btnId);
-  const open=p.style.display==='block';
-  p.style.display=open?'none':'block';
-  b.textContent=open?b.textContent.replace('▾','▸'):b.textContent.replace('▸','▾');
-}
-
-// ROUTINELY
-function openRoutinely(){
-  window.location.href='shortcuts://run-shortcut?name=Routinely%E9%96%8B%E3%81%8F';
-}
-
-// THREE
-function saveThree(){
-  S.three={t1:document.getElementById('t1').value,t2:document.getElementById('t2').value,t3:document.getElementById('t3').value};
-  save();
-  const btn=document.querySelector('.three-save');
-  btn.textContent='✓ 保存した';setTimeout(()=>btn.textContent='保存する',1500);
-}
-function loadThree(){
-  if(S.three){
-    document.getElementById('t1').value=S.three.t1||'';
-    document.getElementById('t2').value=S.three.t2||'';
-    document.getElementById('t3').value=S.three.t3||'';
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return getDefaultData();
+    const data = JSON.parse(raw);
+    return { ...getDefaultData(), ...data };
+  } catch(e) {
+    return getDefaultData();
   }
 }
-
-// TASKS
-function addTask(){
-  const inp=document.getElementById('task-input');
-  const t=inp.value.trim();if(!t)return;
-  S.tasks.push({id:uid(),text:t,priority:document.getElementById('task-pri').value,done:false});
-  inp.value='';save();renderTasks();
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
-document.getElementById('task-input').addEventListener('keydown',e=>{if(e.key==='Enter')addTask();});
-function renderTasks(){
-  renderGroup('g-must','must');renderGroup('g-should','should');renderGroup('g-could','could');
-  renderNow();updateDots();
+function getDefaultData() {
+  return {
+    now: '',
+    today3: [
+      { id: id(), text: '', done: false },
+      { id: id(), text: '', done: false },
+      { id: id(), text: '', done: false }
+    ],
+    zenbu: [],      // 全部ここ
+    shigoto: { machi: [], shinkou: [], tanemaki: [] },
+    okane: { nyukin: [], miseikyu: [], mikaisyu: [] },
+    eigyou: { a: [], b: [], c: [] },
+    seikatsu: { yakusoku: [], jibun: [], yarakashi: [] },
+    benkyou: {
+      slots: {
+        asa: { done: false, memo: '' },
+        kuruma: { done: false, memo: '' },
+        sukima: { done: false, memo: '' },
+        yoru: { done: false, memo: '' }
+      },
+      streak: 0,
+      lastDate: ''
+    },
+    adhd: { trigger: [], log: [] },
+    trash: [],
+    lastReset: ''
+  };
 }
-function renderGroup(cid,pri){
-  const el=document.getElementById(cid);
-  const items=S.tasks.filter(t=>t.priority===pri);
-  if(!items.length){el.innerHTML='<div class="emp">なし</div>';return;}
-  el.innerHTML=items.map(t=>{
-    const isNow=S.now&&S.now.id===t.id;
-    return`<div class="tc${t.done?' done':''}${isNow?' doing':''}">
-      <button class="tc-check" onclick="toggleDone(${t.id})">${t.done?'<svg width="11" height="9" viewBox="0 0 11 9" fill="none"><polyline points="1,4.5 4,7.5 10,1.5" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</button>
-      <div class="tc-body"><div class="tc-text">${esc(t.text)}</div></div>
-      <div class="tc-acts">
-        ${!t.done&&!isNow?`<button class="ib play" onclick="setNow(${t.id})">▶</button>`:''}
-        <button class="ib" onclick="delTask(${t.id})">✕</button>
-      </div>
-    </div>`;
-  }).join('');
-}
-function toggleDone(id){const t=S.tasks.find(t=>t.id===id);if(!t)return;t.done=!t.done;if(t.done&&S.now&&S.now.id===id)S.now=null;save();renderTasks();}
-function delTask(id){S.tasks=S.tasks.filter(t=>t.id!==id);if(S.now&&S.now.id===id)S.now=null;save();renderTasks();}
-function setNow(id){const t=S.tasks.find(t=>t.id===id);if(!t||t.done)return;S.now={id:t.id,text:t.text};save();renderTasks();}
-function renderNow(){
-  const empty=document.getElementById('now-empty');
-  const txt=document.getElementById('now-text');
-  const acts=document.getElementById('now-acts');
-  if(S.now){empty.style.display='none';txt.style.display='block';acts.style.display='flex';txt.textContent=S.now.text;}
-  else{empty.style.display='block';txt.style.display='none';acts.style.display='none';}
-}
-function doneNow(){if(!S.now)return;const t=S.tasks.find(t=>t.id===S.now.id);if(t)t.done=true;S.now=null;save();renderTasks();}
-function clearNow(){S.now=null;save();renderTasks();}
-
-// WAIT
-function addWait(){
-  const inp=document.getElementById('wait-input');
-  const t=inp.value.trim();if(!t)return;
-  S.waits.push({id:uid(),text:t,type:document.getElementById('wait-type').value});
-  inp.value='';save();renderWait();
-}
-document.getElementById('wait-input').addEventListener('keydown',e=>{if(e.key==='Enter')addWait();});
-const waitLabel={reply:'連絡待ち',order:'頼んだこと',outer:'外注中'};
-function renderWait(){
-  ['reply','order','outer'].forEach(type=>{
-    const el=document.getElementById('w-'+type);
-    const items=S.waits.filter(w=>w.type===type);
-    if(!items.length){el.innerHTML='<div class="emp">なし</div>';return;}
-    el.innerHTML=items.map(w=>`
-      <div class="tc">
-        <div class="tc-body"><div class="tc-text">${esc(w.text)}</div></div>
-        <div class="tc-acts"><button class="ib" onclick="delWait(${w.id})">✕</button></div>
-      </div>`).join('');
-  });
-  updateDots();
-}
-function delWait(id){S.waits=S.waits.filter(w=>w.id!==id);save();renderWait();}
-
-// FUTURE
-function addFuture(){
-  const inp=document.getElementById('future-input');
-  const t=inp.value.trim();if(!t)return;
-  S.futures.push({id:uid(),text:t,rank:document.getElementById('future-rank').value,cat:document.getElementById('future-cat').value});
-  inp.value='';save();renderFuture();
-}
-document.getElementById('future-input').addEventListener('keydown',e=>{if(e.key==='Enter')addFuture();});
-function setFC(f,btn){futureFilter=f;document.querySelectorAll('#future-chips .chip').forEach(c=>c.classList.remove('on'));btn.classList.add('on');renderFuture();}
-const catL={sales:'営業',site:'現場',money:'お金',plan:'段取り',misc:'その他'};
-const catC={sales:'var(--green)',site:'var(--blue)',money:'var(--red)',plan:'var(--yellow)',misc:'var(--t2)'};
-function renderFuture(){
-  ['a','b','c'].forEach(rank=>{
-    const el=document.getElementById('f-'+rank);
-    let items=S.futures.filter(f=>f.rank===rank);
-    if(futureFilter!=='all')items=items.filter(f=>f.cat===futureFilter);
-    if(!items.length){el.innerHTML='<div class="emp">なし</div>';return;}
-    el.innerHTML=items.map(f=>`
-      <div class="tc">
-        <div class="tc-body">
-          <div class="tc-text">${esc(f.text)}</div>
-          <span class="tc-tag" style="background:rgba(255,255,255,.06);color:${catC[f.cat]}">${catL[f.cat]}</span>
-        </div>
-        <div class="tc-acts">
-          <button class="ib" style="color:var(--orange);font-size:10px;width:auto;padding:0 7px;" onclick="futureToTask(${f.id})">→タスク</button>
-          <button class="ib" onclick="delFuture(${f.id})">✕</button>
-        </div>
-      </div>`).join('');
-  });
-}
-function delFuture(id){S.futures=S.futures.filter(f=>f.id!==id);save();renderFuture();}
-
-// QUICK TASK（どの画面からでもタスクに追加）
-function quickTask(inputId, selectId){
-  const inp=document.getElementById(inputId);
-  const t=inp.value.trim();if(!t)return;
-  const pri=document.getElementById(selectId).value;
-  S.tasks.push({id:uid(),text:t,priority:pri,done:false});
-  inp.value='';save();renderTasks();
-  // 追加フィードバック
-  const btn=inp.nextElementSibling?.nextElementSibling||inp.parentElement.querySelector('.a-btn');
-  if(btn){const orig=btn.textContent;btn.textContent='✓';setTimeout(()=>btn.textContent=orig,800);}
+function id() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 }
 
-// FUTURE TO TASK（未来カードをそのままタスクへ昇格）
-function futureToTask(id){
-  const f=S.futures.find(f=>f.id===id);if(!f)return;
-  S.tasks.push({id:uid(),text:f.text,priority:'must',done:false});
-  S.futures=S.futures.filter(f=>f.id!==id);
-  save();renderFuture();renderTasks();
-}
+let state = loadData();
+let currentTab = 'zenbu';
+let currentTag = 'なんでも';
+let editingItem = null;
+let trashTimer = null;
+let dragSrc = null;
 
-// MONEY
-const mmTitles={in:'今月入る',next:'来月入る',unc:'未回収',unb:'未請求→即請求'};
-function openMM(type){
-  mmType=type;
-  document.getElementById('mm-title').textContent=mmTitles[type]+' — 追加';
-  document.getElementById('mm-name').value='';document.getElementById('mm-amount').value='';
-  document.getElementById('mm-overlay').classList.add('open');
-  setTimeout(()=>document.getElementById('mm-name').focus(),100);
-}
-function closeMM(){document.getElementById('mm-overlay').classList.remove('open');}
-function saveMM(){
-  const name=document.getElementById('mm-name').value.trim();
-  const amount=parseInt(document.getElementById('mm-amount').value)||0;
-  if(!name)return;
-  S.money[mmType].push({id:uid(),name,amount});
-  save();renderMoney();closeMM();
-}
-function renderMoney(){
-  ['in','next','unc','unb'].forEach(type=>{
-    const items=S.money[type];
-    const total=items.reduce((s,i)=>s+i.amount,0);
-    document.getElementById('mt-'+type).textContent='¥'+total.toLocaleString();
-    const el=document.getElementById('ml-'+type);
-    el.innerHTML=items.map(i=>`
-      <div class="mi">
-        <span>${esc(i.name)}</span>
-        <span>¥${i.amount.toLocaleString()}<button class="mi-del" onclick="delMoney('${type}',${i.id})">✕</button></span>
-      </div>`).join('');
-  });
-  renderMoneyCheck();
-  updateDots();
-}
-function delMoney(type,id){S.money[type]=S.money[type].filter(i=>i.id!==id);save();renderMoney();}
-function confirmMoneyCheck(){
-  S.moneyCheckDate=todayStr();save();renderMoneyCheck();
-}
-function renderMoneyCheck(){
-  const el=document.getElementById('money-check-label');
-  if(!S.moneyCheckDate){el.textContent='未回収・未請求の最終確認日：未設定';el.classList.add('alert');return;}
-  const last=new Date(S.moneyCheckDate.replace(/-/g,'/'));
-  const diff=Math.floor((new Date()-last)/86400000);
-  if(diff>=7){el.textContent=`最終確認：${diff}日前 ⚠ 確認してください`;el.classList.add('alert');}
-  else{el.textContent=`最終確認：${diff===0?'今日':`${diff}日前`}`;el.classList.remove('alert');}
-}
-
-// STUDY
-function toggleSlot(key){
-  S.study.slots[key]=!S.study.slots[key];
-  if(key==='night'&&S.study.slots.night){
-    const today=todayStr();
-    if(S.study.lastNight!==today){
-      const last=new Date(S.study.lastNight||0);
-      const yest=new Date();yest.setDate(yest.getDate()-1);
-      S.study.streak=(last.toDateString()===yest.toDateString())?S.study.streak+1:1;
-      S.study.lastNight=today;
+// ========== 日次リセット ==========
+function checkDailyReset() {
+  const today = new Date().toISOString().slice(0,10);
+  if (state.lastReset !== today) {
+    // 勉強スロットをリセット
+    Object.keys(state.benkyou.slots).forEach(k => {
+      state.benkyou.slots[k].done = false;
+    });
+    // ストリーク判定: 前日に何か1つでも完了していたら継続
+    if (state.lastReset) {
+      const prevDone = state.benkyou.lastDate === state.lastReset;
+      if (!prevDone) state.benkyou.streak = 0;
     }
+    // 今日3つは持ち越し（done=true は消す）
+    state.today3 = state.today3.map(t =>
+      t.done ? { id: id(), text: '', done: false } : t
+    );
+    state.lastReset = today;
+    saveData();
   }
-  save();renderStudy();
-}
-function saveStudyMemo(){S.study.memo=document.getElementById('study-memo').value;save();const btn=document.querySelector('.smb-save');btn.textContent='✓ 保存した';setTimeout(()=>btn.textContent='保存する',1500);}
-function renderStudy(){
-  document.getElementById('streak-n').textContent=S.study.streak||0;
-  ['car','night','gap','morning'].forEach(key=>{
-    const btn=document.getElementById('sb-'+key);const slot=document.getElementById('sl-'+key);
-    if(S.study.slots[key]){btn.textContent='✓ 完了';btn.classList.add('done-slot-btn');slot.classList.add('done-slot');}
-    else{btn.textContent='未';btn.classList.remove('done-slot-btn');slot.classList.remove('done-slot');}
-  });
-  if(S.study.memo)document.getElementById('study-memo').value=S.study.memo;
 }
 
-// DUMP
-function saveDump(key){
-  S.dump[key]=document.getElementById('dump-'+key).value;save();
-  const panels=document.querySelectorAll('.dpanel');
-  panels.forEach(p=>{
-    const btn=p.querySelector('.dump-save');
-    if(btn&&p.id==='dp-'+key){btn.textContent='✓ 保存した';setTimeout(()=>btn.textContent='保存する',1500);}
-  });
+// ========== バッジ更新 ==========
+function updateBadges() {
+  const count = arr => Array.isArray(arr) ? arr.length : 0;
+  document.getElementById('bz').textContent = count(state.zenbu);
+  document.getElementById('bz').classList.toggle('zero', count(state.zenbu) === 0);
+
+  const sCount = count(state.shigoto.machi) + count(state.shigoto.shinkou) + count(state.shigoto.tanemaki);
+  document.getElementById('bs').textContent = sCount;
+  document.getElementById('bs').classList.toggle('zero', sCount === 0);
+
+  const oCount = count(state.okane.nyukin) + count(state.okane.miseikyu) + count(state.okane.mikaisyu);
+  document.getElementById('bo').textContent = oCount;
+  document.getElementById('bo').classList.toggle('zero', oCount === 0);
+
+  const eCount = count(state.eigyou.a) + count(state.eigyou.b) + count(state.eigyou.c);
+  document.getElementById('be').textContent = eCount;
+  document.getElementById('be').classList.toggle('zero', eCount === 0);
+
+  const kCount = count(state.seikatsu.yakusoku);
+  document.getElementById('bk').textContent = kCount;
+  document.getElementById('bk').classList.toggle('zero', kCount === 0);
+
+  const bCount = Object.values(state.benkyou.slots).filter(s => !s.done).length;
+  document.getElementById('bb').textContent = bCount;
+  document.getElementById('bb').classList.toggle('zero', bCount === 0);
+
+  const aCount = count(state.adhd.log);
+  document.getElementById('ba').textContent = aCount;
+  document.getElementById('ba').classList.toggle('zero', aCount === 0);
 }
-function loadDumps(){
-  ['nayami','omoi','toppa','nandemo'].forEach(key=>{
-    const el=document.getElementById('dump-'+key);
-    if(el&&S.dump&&S.dump[key])el.value=S.dump[key];
+
+// ========== NOWカード ==========
+function renderNow() {
+  const t = document.getElementById('nowText');
+  const a = document.getElementById('nowActions');
+  if (state.now) {
+    t.textContent = state.now;
+    t.classList.remove('now-empty');
+    a.style.display = 'flex';
+  } else {
+    t.textContent = 'タップして「今やってること」を1つだけ書く';
+    t.classList.add('now-empty');
+    a.style.display = 'none';
+  }
+}
+document.getElementById('nowText').addEventListener('click', () => {
+  openEditModal({
+    title: '今やってること（1つだけ）',
+    value: state.now,
+    placeholder: '今集中するもの1つ',
+    onSave: v => { state.now = v.trim(); saveData(); renderNow(); }
+  });
+});
+document.getElementById('nowDone').addEventListener('click', () => {
+  if (state.now) {
+    state.now = '';
+    saveData(); renderNow();
+  }
+});
+document.getElementById('nowClear').addEventListener('click', () => {
+  state.now = '';
+  saveData(); renderNow();
+});
+
+// ========== 今日3つ ==========
+function renderToday3() {
+  const wrap = document.getElementById('today3List');
+  wrap.innerHTML = '';
+  state.today3.forEach((t, i) => {
+    const row = document.createElement('div');
+    row.className = 'today3-item' + (t.done ? ' done' : '');
+    row.innerHTML = `
+      <div class="check ${t.done ? 'checked' : ''}" data-i="${i}"></div>
+      <div class="today3-text ${!t.text ? 'placeholder' : ''}" data-i="${i}">${t.text || `${i+1}つ目を書く`}</div>
+      ${t.text ? `<button class="today3-del" data-i="${i}">×</button>` : ''}
+    `;
+    wrap.appendChild(row);
+  });
+  wrap.querySelectorAll('.check').forEach(el => {
+    el.addEventListener('click', () => {
+      const i = +el.dataset.i;
+      if (!state.today3[i].text) return;
+      state.today3[i].done = !state.today3[i].done;
+      saveData(); renderToday3();
+    });
+  });
+  wrap.querySelectorAll('.today3-text').forEach(el => {
+    el.addEventListener('click', () => {
+      const i = +el.dataset.i;
+      openEditModal({
+        title: `今日絶対やる #${i+1}`,
+        value: state.today3[i].text,
+        placeholder: '今日絶対やるやつを書く',
+        onSave: v => {
+          state.today3[i].text = v.trim();
+          state.today3[i].done = false;
+          saveData(); renderToday3();
+        }
+      });
+    });
+  });
+  wrap.querySelectorAll('.today3-del').forEach(el => {
+    el.addEventListener('click', () => {
+      const i = +el.dataset.i;
+      state.today3[i] = { id: id(), text: '', done: false };
+      saveData(); renderToday3();
+    });
   });
 }
 
-// TRIGGERS
-function toggleEditMode(){
-  editMode=!editMode;
-  document.getElementById('edit-bar').classList.toggle('show',editMode);
-  document.getElementById('trig-add-row').classList.toggle('show',editMode);
-  document.getElementById('edit-toggle-btn').textContent=editMode?'✕ 閉じる':'✏ 編集';
-  renderTriggers();
+// ========== 全部ここ入力バー ==========
+const quickInput = document.getElementById('quickInput');
+quickInput.addEventListener('input', () => {
+  quickInput.style.height = 'auto';
+  quickInput.style.height = Math.min(quickInput.scrollHeight, 120) + 'px';
+});
+document.querySelectorAll('.qtag').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.qtag').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    currentTag = b.dataset.tag;
+  });
+});
+document.getElementById('quickSend').addEventListener('click', sendQuick);
+quickInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+    e.preventDefault();
+    sendQuick();
+  }
+});
+function sendQuick() {
+  const v = quickInput.value.trim();
+  if (!v) return;
+  state.zenbu.unshift({
+    id: id(),
+    text: v,
+    tag: currentTag,
+    ts: Date.now(),
+    promoted: false
+  });
+  quickInput.value = '';
+  quickInput.style.height = 'auto';
+  saveData();
+  if (currentTab === 'zenbu') renderContent();
+  updateBadges();
 }
-function addTrigger(){
-  const w=document.getElementById('trig-when-inp').value.trim();
-  const t=document.getElementById('trig-then-inp').value.trim();
-  if(!w||!t)return;
-  S.triggers.push({when:w,then:t});
-  document.getElementById('trig-when-inp').value='';
-  document.getElementById('trig-then-inp').value='';
-  save();renderTriggers();
+
+// ========== タブ切り替え ==========
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    currentTab = t.dataset.tab;
+    renderContent();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
+// ========== コンテンツレンダー ==========
+function renderContent() {
+  const c = document.getElementById('content');
+  c.innerHTML = '';
+  switch(currentTab) {
+    case 'zenbu': renderZenbu(c); break;
+    case 'shigoto': renderShigoto(c); break;
+    case 'okane': renderOkane(c); break;
+    case 'eigyou': renderEigyou(c); break;
+    case 'seikatsu': renderSeikatsu(c); break;
+    case 'benkyou': renderBenkyou(c); break;
+    case 'adhd': renderAdhd(c); break;
+    case 'rule': renderRule(c); break;
+  }
 }
-function delTrigger(idx){S.triggers.splice(idx,1);save();renderTriggers();}
-function renderTriggers(){
-  const el=document.getElementById('trigger-list');
-  el.innerHTML=S.triggers.map((t,i)=>`
-    <div class="trig">
-      <div class="trig-arrow">▶</div>
-      <div class="trig-body">
-        <div class="trig-when">${esc(t.when)}</div>
-        <div class="trig-then">→ ${esc(t.then)}</div>
+
+// ----- 全部ここ -----
+function renderZenbu(c) {
+  c.innerHTML = `<div class="helper">頭にあるものを全部ここに。整理しないでOK。あとで「振り分け」「タスクに昇格」「削除」する。</div>`;
+  const sec = makeSection('全部ここ', state.zenbu.length, true);
+  if (state.zenbu.length === 0) {
+    sec.body.innerHTML = '<div class="empty-state">空っぽ。上の入力バーから投げ込め。</div>';
+  } else {
+    state.zenbu.forEach(item => {
+      sec.body.appendChild(makeZenbuItem(item));
+    });
+  }
+  c.appendChild(sec.section);
+}
+function makeZenbuItem(item) {
+  const d = document.createElement('div');
+  d.className = 'item';
+  d.dataset.id = item.id;
+  const since = timeAgo(item.ts);
+  d.innerHTML = `
+    <div class="item-text">${escape(item.text)}${item.promoted ? '<span class="promoted-badge">→タスク化済</span>' : ''}
+      <div class="item-meta"><span class="item-tag">${item.tag}</span>${since}</div>
+    </div>
+    <div class="item-actions">
+      <button class="iconbtn" data-act="edit" title="編集">✎</button>
+      <button class="iconbtn" data-act="move" title="振り分け">→</button>
+      <button class="iconbtn" data-act="del" title="削除">×</button>
+    </div>
+  `;
+  d.querySelector('[data-act=edit]').addEventListener('click', () => editZenbu(item.id));
+  d.querySelector('[data-act=move]').addEventListener('click', () => moveZenbu(item.id));
+  d.querySelector('[data-act=del]').addEventListener('click', () => delZenbu(item.id));
+  return d;
+}
+function editZenbu(itemId) {
+  const item = state.zenbu.find(x => x.id === itemId);
+  if (!item) return;
+  openEditModal({
+    title: '編集',
+    value: item.text,
+    placeholder: '',
+    onSave: v => {
+      item.text = v.trim();
+      if (!item.text) {
+        state.zenbu = state.zenbu.filter(x => x.id !== itemId);
+      }
+      saveData(); renderContent(); updateBadges();
+    }
+  });
+}
+function moveZenbu(itemId) {
+  const item = state.zenbu.find(x => x.id === itemId);
+  if (!item) return;
+  openMoveModal(item.text, target => {
+    addToTarget(target, item.text);
+    item.promoted = true;
+    saveData(); renderContent(); updateBadges();
+  });
+}
+function delZenbu(itemId) {
+  const item = state.zenbu.find(x => x.id === itemId);
+  if (!item) return;
+  state.trash.push({ ...item, from: 'zenbu' });
+  state.zenbu = state.zenbu.filter(x => x.id !== itemId);
+  saveData(); renderContent(); updateBadges();
+  showTrashBanner();
+}
+
+// ----- 仕事 -----
+function renderShigoto(c) {
+  const cols = [
+    { key: 'machi', label: '待ち（返信/依頼/外注）' },
+    { key: 'shinkou', label: '進行中（A：今すぐ・動いてる）' },
+    { key: 'tanemaki', label: '種まき（B：仕込み・C：いつか）' }
+  ];
+  cols.forEach(col => {
+    const sec = makeSection(col.label, state.shigoto[col.key].length);
+    renderItemList(sec.body, state.shigoto[col.key], 'shigoto.' + col.key);
+    addMiniAdd(sec.body, () => {
+      promptAdd('追加', txt => {
+        state.shigoto[col.key].unshift({ id: id(), text: txt, ts: Date.now() });
+        saveData(); renderContent(); updateBadges();
+      });
+    });
+    c.appendChild(sec.section);
+  });
+}
+
+// ----- お金 -----
+function renderOkane(c) {
+  // サマリー
+  const sum = document.createElement('div');
+  sum.className = 'money-summary';
+  const totalMiseikyu = state.okane.miseikyu.length;
+  const totalMikaisyu = state.okane.mikaisyu.length;
+  sum.innerHTML = `
+    <div class="money-card">
+      <div class="money-label">未請求</div>
+      <div class="money-amount ${totalMiseikyu > 0 ? 'warn' : ''}">${totalMiseikyu}件</div>
+    </div>
+    <div class="money-card">
+      <div class="money-label">未回収</div>
+      <div class="money-amount ${totalMikaisyu > 0 ? 'alert' : ''}">${totalMikaisyu}件</div>
+    </div>
+  `;
+  c.appendChild(sum);
+
+  // 警告メッセージ
+  if (totalMiseikyu > 0) {
+    const warn = document.createElement('div');
+    warn.className = 'helper';
+    warn.style.color = '#f5a623';
+    warn.textContent = '⚠ 未請求あり。即請求のルール。';
+    c.appendChild(warn);
+  }
+
+  const cols = [
+    { key: 'nyukin', label: '入金待ち（今月/来月）' },
+    { key: 'miseikyu', label: '未請求（即請求）' },
+    { key: 'mikaisyu', label: '未回収（週1確認）' }
+  ];
+  cols.forEach(col => {
+    const sec = makeSection(col.label, state.okane[col.key].length);
+    renderItemList(sec.body, state.okane[col.key], 'okane.' + col.key);
+    addMiniAdd(sec.body, () => {
+      promptAdd('追加', txt => {
+        state.okane[col.key].unshift({ id: id(), text: txt, ts: Date.now() });
+        saveData(); renderContent(); updateBadges();
+      });
+    });
+    c.appendChild(sec.section);
+  });
+}
+
+// ----- 営業 -----
+function renderEigyou(c) {
+  c.innerHTML = `<div class="helper">毎日触る。Aは今すぐ動く、Bは仕込み中、Cは種まき。</div>`;
+  const cols = [
+    { key: 'a', label: 'A：今すぐ金（直近で売上になる）' },
+    { key: 'b', label: 'B：見積・調整中（提案中の案件）' },
+    { key: 'c', label: 'C：種まき（ツクリンク・新規開拓）' }
+  ];
+  cols.forEach(col => {
+    const sec = makeSection(col.label, state.eigyou[col.key].length);
+    renderItemList(sec.body, state.eigyou[col.key], 'eigyou.' + col.key);
+    addMiniAdd(sec.body, () => {
+      promptAdd('追加', txt => {
+        state.eigyou[col.key].unshift({ id: id(), text: txt, ts: Date.now() });
+        saveData(); renderContent(); updateBadges();
+      });
+    });
+    c.appendChild(sec.section);
+  });
+}
+
+// ----- 生活 -----
+function renderSeikatsu(c) {
+  c.innerHTML = `<div class="helper">当たり前を人並みにこなすための領域。約束・予定・自分との約束。</div>`;
+
+  // 今日の約束
+  const sec1 = makeSection('今日の約束（人との約束・予定）', state.seikatsu.yakusoku.length);
+  renderItemList(sec1.body, state.seikatsu.yakusoku, 'seikatsu.yakusoku');
+  addMiniAdd(sec1.body, () => {
+    promptAdd('約束を追加（例: 14:00 ○○さんに電話）', txt => {
+      state.seikatsu.yakusoku.unshift({ id: id(), text: txt, ts: Date.now() });
+      saveData(); renderContent(); updateBadges();
+    });
+  });
+  c.appendChild(sec1.section);
+
+  // 自分との約束
+  const sec2 = makeSection('自分との約束（守れてるか？）', state.seikatsu.jibun.length);
+  renderItemList(sec2.body, state.seikatsu.jibun, 'seikatsu.jibun');
+  addMiniAdd(sec2.body, () => {
+    promptAdd('自分との約束（例: SNSは隙間5分だけ）', txt => {
+      state.seikatsu.jibun.unshift({ id: id(), text: txt, ts: Date.now() });
+      saveData(); renderContent(); updateBadges();
+    });
+  });
+  c.appendChild(sec2.section);
+
+  // やらかし
+  const sec3 = makeSection('最近のやらかし（繰り返さない用）', state.seikatsu.yarakashi.length, true);
+  renderItemList(sec3.body, state.seikatsu.yarakashi, 'seikatsu.yarakashi');
+  addMiniAdd(sec3.body, () => {
+    promptAdd('やらかし（例: 約束時間に遅れた）', txt => {
+      state.seikatsu.yarakashi.unshift({ id: id(), text: txt, ts: Date.now() });
+      saveData(); renderContent(); updateBadges();
+    });
+  });
+  c.appendChild(sec3.section);
+}
+
+// ----- 勉強 -----
+function renderBenkyou(c) {
+  // ストリーク
+  const sc = document.createElement('div');
+  sc.className = 'streak-card';
+  sc.innerHTML = `
+    <div class="streak-num">${state.benkyou.streak}</div>
+    <div class="streak-label">DAY STREAK</div>
+    <div class="streak-sub">最低5分でOK。続けることが全て。</div>
+  `;
+  c.appendChild(sc);
+
+  // 4スロット
+  const grid = document.createElement('div');
+  grid.className = 'slot-grid';
+  const slots = [
+    { key: 'asa', label: '朝/寝る前 5分' },
+    { key: 'kuruma', label: '車中（復習だけ）' },
+    { key: 'sukima', label: '隙間 5-15分' },
+    { key: 'yoru', label: '夜 30-60分（メイン）' }
+  ];
+  slots.forEach(s => {
+    const slot = state.benkyou.slots[s.key];
+    const el = document.createElement('div');
+    el.className = 'slot' + (slot.done ? ' done' : '');
+    el.innerHTML = `
+      <div class="slot-name">${s.label} <span class="slot-check">${slot.done ? '✓' : ''}</span></div>
+      <div class="slot-detail">${slot.memo || (slot.done ? '完了' : 'タップで完了')}</div>
+    `;
+    el.addEventListener('click', () => {
+      const wasUndone = !slot.done;
+      slot.done = !slot.done;
+      // 今日のうち1つでも完了したらストリーク+1
+      if (wasUndone) {
+        const today = new Date().toISOString().slice(0,10);
+        if (state.benkyou.lastDate !== today) {
+          state.benkyou.streak++;
+          state.benkyou.lastDate = today;
+        }
+      }
+      saveData(); renderContent(); updateBadges();
+    });
+    grid.appendChild(el);
+  });
+  c.appendChild(grid);
+}
+
+// ----- ADHD対策 -----
+function renderAdhd(c) {
+  c.innerHTML = `<div class="helper">自分の特性と付き合うログ。トリガー反応、振り返り。</div>`;
+
+  // 今日のログ
+  const sec1 = makeSection('今日の気づき・振り返り', state.adhd.log.length);
+  renderItemList(sec1.body, state.adhd.log, 'adhd.log');
+  addMiniAdd(sec1.body, () => {
+    promptAdd('気づき（例: 集中切れた、なぜ?）', txt => {
+      state.adhd.log.unshift({ id: id(), text: txt, ts: Date.now() });
+      saveData(); renderContent(); updateBadges();
+    });
+  });
+  c.appendChild(sec1.section);
+
+  // トリガーリスト
+  const sec2 = makeSection('トリガー（迷ったら見る）', null, true);
+  sec2.body.innerHTML = `
+    <div class="rule-text">起きた → <strong>今日3つを書く</strong>
+仕事来た → <strong>①今/②今日/③待ち/④未来</strong> に振る
+車 → 電話orメモ
+現場着 → <strong>5分俯瞰</strong>
+作業 → <strong>タイマー</strong>
+タイマー鳴る → 俯瞰
+悩み → 思考ダンプ
+隙間 → ②今日 or ③待ち処理
+終わり → ④未来A/B/C触る
+寝る前 → 軽く確認</div>
+  `;
+  c.appendChild(sec2.section);
+}
+
+// ----- ルール -----
+function renderRule(c) {
+  c.innerHTML = `<div class="helper">迷った時だけ見る。編集可能。</div>`;
+
+  const sec1 = makeSection('判断ルール', null);
+  sec1.body.innerHTML = `
+    <div class="rule-text"><strong>1. 仕事の振り分け</strong>
+① 5分以内で終わる？ → 今やる
+② 今日中に必要？ → ①今日3つ
+③ 誰か絡んでる？ → 仕事タブ「待ち」
+④ それ以外 → 営業タブ
+
+<strong>2. 振る/自分でやる</strong>
+・俺じゃないと無理？ → YESならやる
+・それ以外 → 振る
+※作業・雑務は基本振る</div>
+  `;
+  c.appendChild(sec1.section);
+
+  const sec2 = makeSection('仕事判断', null);
+  sec2.body.innerHTML = `
+    <div class="rule-text">・利益出る？
+・楽？
+・繋がる？
+
+<strong>YES多い → やる
+NO多い → やらない</strong></div>
+  `;
+  c.appendChild(sec2.section);
+
+  const sec3 = makeSection('お金ルール', null);
+  sec3.body.innerHTML = `
+    <div class="rule-text">・未請求は<strong>即請求</strong>
+・終わったら<strong>翌日請求</strong>
+・未回収は<strong>週1確認</strong>
+・迷ったら<strong>請求する</strong></div>
+  `;
+  c.appendChild(sec3.section);
+
+  const sec4 = makeSection('絶対ルール', null);
+  sec4.body.innerHTML = `
+    <div class="rule-text">・迷ったらメモ開く
+・全部ここに書く（頭に残さない）
+・今やってるは<strong>1つだけ</strong>
+・ながら禁止
+・タイマーで切る
+・1日3つでいい
+・営業A/B/C毎日触る
+・最低5分やる
+・<strong>完璧にやらない</strong></div>
+  `;
+  c.appendChild(sec4.section);
+
+  const sec5 = makeSection('SNSルール', null, true);
+  sec5.body.innerHTML = `
+    <div class="rule-text">・今やってる時は<strong>絶対禁止</strong>
+・タイマー中は<strong>絶対禁止</strong>
+・見るなら隙間5分だけ
+・迷ったら見ない</div>
+  `;
+  c.appendChild(sec5.section);
+}
+
+// ========== 共通アイテムリスト ==========
+function renderItemList(body, arr, path) {
+  if (arr.length === 0) {
+    const e = document.createElement('div');
+    e.className = 'empty-state';
+    e.textContent = '空っぽ';
+    body.appendChild(e);
+    return;
+  }
+  arr.forEach((item, idx) => {
+    const d = document.createElement('div');
+    d.className = 'item';
+    d.dataset.id = item.id;
+    d.dataset.path = path;
+    d.dataset.idx = idx;
+    d.draggable = true;
+    d.innerHTML = `
+      <div class="item-drag">⋮⋮</div>
+      <div class="item-text ${item.done ? 'done' : ''}">${escape(item.text)}
+        <div class="item-meta">${timeAgo(item.ts)}</div>
       </div>
-      ${editMode?`<button class="trig-del" onclick="delTrigger(${i})">✕</button>`:''}
-    </div>`).join('');
+      <div class="item-actions">
+        <button class="iconbtn" data-act="check">${item.done ? '↻' : '✓'}</button>
+        <button class="iconbtn" data-act="edit">✎</button>
+        <button class="iconbtn" data-act="move">→</button>
+        <button class="iconbtn" data-act="del">×</button>
+      </div>
+    `;
+    // DnD
+    d.addEventListener('dragstart', e => {
+      dragSrc = { path, idx };
+      d.classList.add('dragging');
+    });
+    d.addEventListener('dragend', () => d.classList.remove('dragging'));
+    d.addEventListener('dragover', e => {
+      e.preventDefault();
+      d.classList.add('drag-over');
+    });
+    d.addEventListener('dragleave', () => d.classList.remove('drag-over'));
+    d.addEventListener('drop', e => {
+      e.preventDefault();
+      d.classList.remove('drag-over');
+      if (!dragSrc || dragSrc.path !== path) { dragSrc = null; return; }
+      const src = dragSrc.idx;
+      if (src === idx) return;
+      const moved = arr.splice(src, 1)[0];
+      arr.splice(idx, 0, moved);
+      dragSrc = null;
+      saveData(); renderContent();
+    });
+    // ボタン
+    d.querySelector('[data-act=check]').addEventListener('click', () => {
+      item.done = !item.done;
+      saveData(); renderContent(); updateBadges();
+    });
+    d.querySelector('[data-act=edit]').addEventListener('click', () => {
+      openEditModal({
+        title: '編集',
+        value: item.text,
+        placeholder: '',
+        onSave: v => {
+          item.text = v.trim();
+          if (!item.text) {
+            const i = arr.findIndex(x => x.id === item.id);
+            if (i >= 0) arr.splice(i, 1);
+          }
+          saveData(); renderContent(); updateBadges();
+        }
+      });
+    });
+    d.querySelector('[data-act=move]').addEventListener('click', () => {
+      openMoveModal(item.text, target => {
+        addToTarget(target, item.text);
+        const i = arr.findIndex(x => x.id === item.id);
+        if (i >= 0) arr.splice(i, 1);
+        saveData(); renderContent(); updateBadges();
+      });
+    });
+    d.querySelector('[data-act=del]').addEventListener('click', () => {
+      const i = arr.findIndex(x => x.id === item.id);
+      if (i >= 0) {
+        const removed = arr.splice(i, 1)[0];
+        state.trash.push({ ...removed, from: path });
+        saveData(); renderContent(); updateBadges();
+        showTrashBanner();
+      }
+    });
+    // タッチ用：長押しドラッグ代替（モバイル対応）
+    let touchY = 0, isDragging = false;
+    d.querySelector('.item-drag').addEventListener('touchstart', e => {
+      touchY = e.touches[0].clientY;
+      isDragging = true;
+      d.classList.add('dragging');
+      dragSrc = { path, idx };
+      e.preventDefault();
+    }, { passive: false });
+    d.querySelector('.item-drag').addEventListener('touchmove', e => {
+      if (!isDragging) return;
+      const y = e.touches[0].clientY;
+      const target = document.elementFromPoint(e.touches[0].clientX, y);
+      if (target) {
+        const item = target.closest('.item');
+        if (item && item !== d) {
+          document.querySelectorAll('.drag-over').forEach(x => x.classList.remove('drag-over'));
+          item.classList.add('drag-over');
+        }
+      }
+      e.preventDefault();
+    }, { passive: false });
+    d.querySelector('.item-drag').addEventListener('touchend', e => {
+      if (!isDragging) return;
+      isDragging = false;
+      d.classList.remove('dragging');
+      const overEl = document.querySelector('.drag-over');
+      if (overEl && dragSrc) {
+        const targetIdx = +overEl.dataset.idx;
+        const targetPath = overEl.dataset.path;
+        if (targetPath === path && targetIdx !== dragSrc.idx) {
+          const moved = arr.splice(dragSrc.idx, 1)[0];
+          arr.splice(targetIdx, 0, moved);
+          saveData(); renderContent();
+        }
+      }
+      document.querySelectorAll('.drag-over').forEach(x => x.classList.remove('drag-over'));
+      dragSrc = null;
+    });
+    body.appendChild(d);
+  });
 }
 
-// DOTS
-function updateDots(){
-  const cnt=S.waits.length+(S.money.unc.length+S.money.unb.length);
-  document.getElementById('dot-shigoto').classList.toggle('show',cnt>0);
+// ========== セクション ==========
+function makeSection(title, count, collapsed = false) {
+  const section = document.createElement('div');
+  section.className = 'section' + (collapsed ? ' collapsed' : '');
+  const header = document.createElement('div');
+  header.className = 'section-header';
+  header.innerHTML = `
+    <div class="section-title">${title}</div>
+    ${count !== null ? `<div class="section-count">${count}</div>` : ''}
+    <div class="section-toggle">▼</div>
+  `;
+  const body = document.createElement('div');
+  body.className = 'section-body';
+  header.addEventListener('click', () => {
+    section.classList.toggle('collapsed');
+  });
+  section.appendChild(header);
+  section.appendChild(body);
+  return { section, body };
 }
 
-// DAILY RESET
-function dailyReset(){
-  const today=todayStr();
-  if(!S.study)S.study={slots:{car:false,night:false,gap:false,morning:false},memo:'',streak:0,lastNight:'',lastSlotDate:''};
-  if(S.study.lastSlotDate!==today){
-    S.study.slots={car:false,night:false,gap:false,morning:false};
-    S.study.memo='';S.study.lastSlotDate=today;save();
+function addMiniAdd(body, onAdd) {
+  const b = document.createElement('button');
+  b.className = 'miniadd';
+  b.textContent = '＋ 追加';
+  b.addEventListener('click', e => {
+    e.stopPropagation();
+    onAdd();
+  });
+  body.appendChild(b);
+}
+
+function promptAdd(label, onOk) {
+  openEditModal({
+    title: label,
+    value: '',
+    placeholder: '',
+    onSave: v => { if (v.trim()) onOk(v.trim()); }
+  });
+}
+
+// ========== 振り分け先 ==========
+function addToTarget(target, text) {
+  const obj = { id: id(), text, ts: Date.now() };
+  if (target === 'today3') {
+    const empty = state.today3.findIndex(t => !t.text);
+    if (empty >= 0) state.today3[empty] = { id: id(), text, done: false };
+    else state.today3.push({ id: id(), text, done: false });
+  } else if (target === 'now') {
+    state.now = text;
+  } else {
+    const [tab, col] = target.split('.');
+    if (state[tab] && state[tab][col]) state[tab][col].unshift(obj);
   }
 }
 
-// INIT
-function init(){
-  load();dailyReset();
-  document.getElementById('date-label').textContent=fmtDate();
-  loadThree();loadDumps();
-  renderTasks();renderWait();renderFuture();renderMoney();renderStudy();renderTriggers();
+// ========== モーダル ==========
+function openEditModal({ title, value, placeholder, onSave }) {
+  const bg = document.createElement('div');
+  bg.className = 'modal-bg';
+  bg.innerHTML = `
+    <div class="modal">
+      <div class="modal-title">${title}</div>
+      <textarea class="modal-input" placeholder="${placeholder}">${escape(value)}</textarea>
+      <div class="modal-footer">
+        <button class="modal-btn secondary" data-act="cancel">キャンセル</button>
+        <button class="modal-btn" data-act="save">保存</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('modalContainer').appendChild(bg);
+  const ta = bg.querySelector('textarea');
+  setTimeout(() => ta.focus(), 50);
+  bg.querySelector('[data-act=save]').addEventListener('click', () => {
+    onSave(ta.value);
+    bg.remove();
+  });
+  bg.querySelector('[data-act=cancel]').addEventListener('click', () => bg.remove());
+  bg.addEventListener('click', e => { if (e.target === bg) bg.remove(); });
 }
-init();
+
+function openMoveModal(text, onMove) {
+  const bg = document.createElement('div');
+  bg.className = 'modal-bg';
+  bg.innerHTML = `
+    <div class="modal">
+      <div class="modal-title">どこに振り分ける？</div>
+      <div style="font-size:12px;color:#888;margin-bottom:8px;padding:8px;background:#232325;border-radius:8px;white-space:pre-wrap;max-height:80px;overflow-y:auto;">${escape(text)}</div>
+      <div class="move-grid">
+        <button class="move-btn" data-t="now">▶ 今これをやれ</button>
+        <button class="move-btn" data-t="today3">⭐ 今日3つ</button>
+        <button class="move-btn" data-t="shigoto.machi">仕事：待ち</button>
+        <button class="move-btn" data-t="shigoto.shinkou">仕事：進行中</button>
+        <button class="move-btn" data-t="shigoto.tanemaki">仕事：種まき</button>
+        <button class="move-btn" data-t="okane.nyukin">お金：入金待ち</button>
+        <button class="move-btn" data-t="okane.miseikyu">お金：未請求</button>
+        <button class="move-btn" data-t="okane.mikaisyu">お金：未回収</button>
+        <button class="move-btn" data-t="eigyou.a">営業：A今すぐ</button>
+        <button class="move-btn" data-t="eigyou.b">営業：B調整中</button>
+        <button class="move-btn" data-t="eigyou.c">営業：C種まき</button>
+        <button class="move-btn" data-t="seikatsu.yakusoku">生活：今日の約束</button>
+        <button class="move-btn" data-t="seikatsu.jibun">生活：自分との約束</button>
+        <button class="move-btn" data-t="seikatsu.yarakashi">生活：やらかし</button>
+        <button class="move-btn" data-t="adhd.log">ADHD：気づき</button>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn secondary" data-act="cancel">キャンセル</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('modalContainer').appendChild(bg);
+  bg.querySelectorAll('.move-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      onMove(b.dataset.t);
+      bg.remove();
+    });
+  });
+  bg.querySelector('[data-act=cancel]').addEventListener('click', () => bg.remove());
+  bg.addEventListener('click', e => { if (e.target === bg) bg.remove(); });
+}
+
+// ========== ゴミ箱 ==========
+function showTrashBanner() {
+  if (trashTimer) clearTimeout(trashTimer);
+  const last = state.trash[state.trash.length - 1];
+  if (!last) return;
+  const banner = document.getElementById('trashBanner');
+  banner.innerHTML = `
+    <div class="trash-banner">
+      <span>削除した: ${escape(last.text.slice(0,20))}${last.text.length > 20 ? '…' : ''}</span>
+      <button class="undo-btn" id="undoBtn">取り消す</button>
+    </div>
+  `;
+  document.getElementById('undoBtn').addEventListener('click', () => {
+    const restored = state.trash.pop();
+    if (restored) {
+      if (restored.from === 'zenbu') {
+        state.zenbu.unshift(restored);
+      } else {
+        const [tab, col] = restored.from.split('.');
+        if (state[tab] && state[tab][col]) state[tab][col].unshift(restored);
+      }
+      saveData(); renderContent(); updateBadges();
+    }
+    banner.innerHTML = '';
+  });
+  trashTimer = setTimeout(() => {
+    banner.innerHTML = '';
+  }, 8000);
+}
+
+// ========== ユーティリティ ==========
+function escape(s) {
+  if (!s) return '';
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function timeAgo(ts) {
+  if (!ts) return '';
+  const diff = Date.now() - ts;
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return '今';
+  if (m < 60) return `${m}分前`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}時間前`;
+  const d = Math.floor(h / 24);
+  return `${d}日前`;
+}
+
+// ========== 初期化 ==========
+checkDailyReset();
+renderNow();
+renderToday3();
+updateBadges();
+renderContent();
+
+// 30秒ごとに時間表示を更新
+setInterval(() => {
+  if (currentTab === 'zenbu') renderContent();
+}, 30000);
 </script>
+
 </body>
 </html>
