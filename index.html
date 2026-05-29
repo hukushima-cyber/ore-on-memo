@@ -751,8 +751,9 @@
 <div id="modalContainer"></div>
 
 <script>
-// ========== ストレージ ==========
-const STORAGE_KEY = 'ore-no-memo-v7';
+// ========== ストレージ（v9: ローカル＋クラウド同期）==========
+const STORAGE_KEY = 'ore-no-memo-v9';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycby7qCAfVKcFGx48cBQlNO171qbFQeZ3b1hnAp5u0D4jCK5_pVxrIjCB3_bV2qZ-HOFEOA/exec';
 
 function loadData() {
   try {
@@ -765,7 +766,51 @@ function loadData() {
   }
 }
 function saveData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  // ローカル保存（即時・オフライン対応）
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+  // クラウド保存（GAS経由でスプシへ）
+  try {
+    const data = JSON.stringify(state);
+    fetch(GAS_URL+'?action=save&data='+encodeURIComponent(data))
+      .then(r=>r.text()).then(()=>showSyncStatus('✓ 保存'))
+      .catch(()=>showSyncStatus('オフライン（ローカル保存のみ）'));
+  } catch(e) {}
+}
+function loadFromCloud() {
+  fetch(GAS_URL+'?action=load')
+    .then(r=>r.json())
+    .then(p=>{
+      if (p && Object.keys(p).length > 0 && p[STORAGE_KEY]) {
+        // GAS側がキー指定で返してくる場合
+        state = { ...getDefaultData(), ...p[STORAGE_KEY] };
+      } else if (p && Object.keys(p).length > 0) {
+        // GAS側が中身をそのまま返してくる場合
+        state = { ...getDefaultData(), ...p };
+      } else {
+        showSyncStatus('クラウドにデータなし（新規スタート）');
+        return;
+      }
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+      // 画面再描画
+      renderNow();
+      renderToday3();
+      updateBadges();
+      renderContent();
+      showSyncStatus('✓ クラウドから読み込み完了');
+    })
+    .catch(()=>showSyncStatus('オフライン（ローカルデータ使用中）'));
+}
+function showSyncStatus(msg) {
+  let el = document.getElementById('sync-status');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'sync-status';
+    el.style.cssText = 'position:fixed;top:env(safe-area-inset-top,0);left:0;right:0;background:rgba(0,200,83,.92);color:#000;font-size:11px;font-weight:700;text-align:center;padding:4px;z-index:999;transition:opacity .5s;';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.opacity = '1';
+  setTimeout(()=>{ el.style.opacity = '0'; }, 2000);
 }
 function getDefaultData() {
   return {
@@ -1640,6 +1685,8 @@ renderNow();
 renderToday3();
 updateBadges();
 renderContent();
+// クラウド（スプシ）から最新データを取得して上書き
+loadFromCloud();
 
 // 30秒ごとに時間表示を更新
 setInterval(() => {
