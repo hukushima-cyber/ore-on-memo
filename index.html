@@ -679,6 +679,229 @@
     padding: 4px 4px 8px;
     line-height: 1.5;
   }
+  /* ===== v9 第1弾追加スタイル ===== */
+  /* 状態スキャン＋睡眠バー（上部常時表示） */
+  .vital-bar {
+    display: flex;
+    gap: 6px;
+    padding: 6px 12px 8px;
+    background: #18181a;
+    border-bottom: 1px solid #2a2a2c;
+  }
+  .vital-chip {
+    flex: 1;
+    background: #232325;
+    border: 1px solid #3a3a3c;
+    border-radius: 10px;
+    padding: 6px 8px;
+    text-align: center;
+    min-width: 0;
+  }
+  .vital-chip-label {
+    font-size: 9px;
+    color: #888;
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+  .vital-chip-val {
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    margin-top: 2px;
+    white-space: nowrap;
+  }
+  .vital-chip-val.hp-low { color: #ef5a5a; }
+  .vital-chip-val.hp-mid { color: #f5a623; }
+  .vital-chip-val.hp-ok { color: #4ade80; }
+  .vital-chip-val.noise-high { color: #ef5a5a; }
+  .vital-msg {
+    margin: 0 12px 6px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+  }
+  .vital-msg.low { background: #3a1a1a; color: #ff8a8a; }
+  .vital-msg.mid { background: #3a2a1a; color: #f5a623; }
+
+  /* スライダー（HP/ノイズ入力） */
+  .slider-row { margin-bottom: 14px; }
+  .slider-row-label {
+    font-size: 12px;
+    color: #ccc;
+    font-weight: 700;
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .slider-row-label span:last-child { color: #4a90e2; font-size: 16px; }
+  input[type=range].vital-slider {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    border-radius: 4px;
+    background: #3a3a3c;
+    outline: none;
+  }
+  input[type=range].vital-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: #4a90e2;
+    cursor: pointer;
+    border: 2px solid #fff;
+  }
+
+  /* プリセットボタングリッド（睡眠・期限・所要時間） */
+  .preset-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .preset-btn {
+    background: #2a2a2c;
+    border: 1px solid #3a3a3c;
+    border-radius: 14px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: #ccc;
+  }
+  .preset-btn.active { background: #4a90e2; color: #fff; border-color: #4a90e2; }
+  .preset-btn.clear { color: #888; }
+
+  .custom-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .custom-row input.num {
+    flex: 1;
+    background: #2a2a2c;
+    border: 1px solid #3a3a3c;
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: #fff;
+    font-size: 14px;
+  }
+  .custom-row select {
+    background: #2a2a2c;
+    border: 1px solid #3a3a3c;
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: #fff;
+    font-size: 14px;
+  }
+
+  /* 期限マーク */
+  .deadline-mark {
+    display: inline-block;
+    font-size: 10px;
+    padding: 1px 7px;
+    border-radius: 8px;
+    margin-right: 4px;
+    font-weight: 700;
+  }
+  .deadline-mark.over { background: #3a1a1a; color: #ff6b6b; }
+  .deadline-mark.today { background: #3a2a1a; color: #f5a623; }
+  .deadline-mark.future { background: #1a3a2a; color: #4ade80; }
+  .duration-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 1px 7px;
+    border-radius: 8px;
+    margin-right: 4px;
+    background: #2a2a4c;
+    color: #9aa8ff;
+    font-weight: 700;
+  }
+
+  /* 今日3つ：所要時間合計＋詰め込み警告 */
+  .today3-sum {
+    font-size: 10px;
+    color: #888;
+    margin-top: 6px;
+    font-weight: 700;
+  }
+  .today3-sum.over { color: #ef5a5a; }
+
+  /* 今日3つアクション行（今これボタン・メタ） */
+  .today3-item { flex-wrap: wrap; }
+  .today3-now-btn {
+    background: rgba(122,192,255,0.15);
+    border: 1px solid rgba(122,192,255,0.4);
+    color: #7ac0ff;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .today3-handle {
+    color: #555;
+    font-size: 13px;
+    cursor: grab;
+    touch-action: none;
+    flex-shrink: 0;
+    padding-right: 2px;
+  }
+  .today3-meta-row {
+    width: 100%;
+    padding-left: 28px;
+    margin-top: -2px;
+  }
+  .today3-item.dragging { opacity: 0.4; }
+  .today3-item.drag-over { background: #1a2a3c; }
+
+  /* 期限フィルタボタン */
+  .deadline-filter {
+    background: #2a2a2c;
+    border: 1px solid #3a3a3c;
+    color: #aaa;
+    border-radius: 14px;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .deadline-filter.active { background: #f5a623; color: #000; border-color: #f5a623; }
+
+  /* 推移グラフ（HP/ノイズ・睡眠の簡易バー） */
+  .mini-graph {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 56px;
+    margin: 8px 0 4px;
+  }
+  .mini-graph-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .mini-bar {
+    width: 100%;
+    border-radius: 3px 3px 0 0;
+    min-height: 2px;
+  }
+  .mini-bar.hp { background: #4ade80; }
+  .mini-bar.noise { background: #ef5a5a; }
+  .mini-bar.sleep { background: #7ac0ff; }
+  .mini-graph-day { font-size: 8px; color: #666; }
+  .sleep-list-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #bbb;
+    padding: 5px 0;
+    border-bottom: 1px solid #232325;
+  }
 </style>
 </head>
 <body>
@@ -693,6 +916,23 @@
     <a href="googlegmail://" class="linkbtn">✉️ Gmail</a>
     <a href="shortcuts://run-shortcut?name=Routinely%E9%96%8B%E3%81%8F" class="linkbtn">🔄 Routinely</a>
   </div>
+
+  <!-- 状態スキャン＋睡眠バー（I/D） -->
+  <div class="vital-bar">
+    <div class="vital-chip" id="chipHp">
+      <div class="vital-chip-label">HP</div>
+      <div class="vital-chip-val" id="hpVal">--</div>
+    </div>
+    <div class="vital-chip" id="chipNoise">
+      <div class="vital-chip-label">ノイズ</div>
+      <div class="vital-chip-val" id="noiseVal">--</div>
+    </div>
+    <div class="vital-chip" id="chipSleep">
+      <div class="vital-chip-label">🛌 睡眠</div>
+      <div class="vital-chip-val" id="sleepVal">--</div>
+    </div>
+  </div>
+  <div id="vitalMsg"></div>
 
   <!-- 全部ここ入力バー -->
   <div class="quickbar">
@@ -794,6 +1034,7 @@ function loadFromCloud() {
       // 画面再描画
       renderNow();
       renderToday3();
+      renderVital();
       updateBadges();
       renderContent();
       showSyncStatus('✓ クラウドから読み込み完了');
@@ -816,10 +1057,12 @@ function getDefaultData() {
   return {
     now: '',
     today3: [
-      { id: id(), text: '', done: false },
-      { id: id(), text: '', done: false },
-      { id: id(), text: '', done: false }
+      { id: id(), text: '', done: false, deadline: null, duration: null },
+      { id: id(), text: '', done: false, deadline: null, duration: null },
+      { id: id(), text: '', done: false, deadline: null, duration: null }
     ],
+    sleep: [],      // D: 睡眠記録 [{date, minutes}]
+    status: [],     // I: 状態スキャン [{date, timestamp, hp, noise, memo}]
     zenbu: [],      // 全部ここ
     shigoto: { machi: [], shinkou: [], tanemaki: [] },
     okane: { nyukin: [], miseikyu: [], mikaisyu: [] },
@@ -866,7 +1109,7 @@ function checkDailyReset() {
     }
     // 今日3つは持ち越し（done=true は消す）
     state.today3 = state.today3.map(t =>
-      t.done ? { id: id(), text: '', done: false } : t
+      t.done ? { id: id(), text: '', done: false, deadline: null, duration: null } : t
     );
     state.lastReset = today;
     saveData();
@@ -938,19 +1181,87 @@ document.getElementById('nowClear').addEventListener('click', () => {
 });
 
 // ========== 今日3つ ==========
+let t3DragSrc = null;
 function renderToday3() {
   const wrap = document.getElementById('today3List');
   wrap.innerHTML = '';
   state.today3.forEach((t, i) => {
+    if (t.deadline === undefined) t.deadline = null;
+    if (t.duration === undefined) t.duration = null;
     const row = document.createElement('div');
     row.className = 'today3-item' + (t.done ? ' done' : '');
+    row.dataset.i = i;
+    const hasMeta = t.deadline || (t.duration !== null && t.duration !== undefined);
     row.innerHTML = `
+      ${t.text ? '<span class="today3-handle" data-handle="1">⋮⋮</span>' : ''}
       <div class="check ${t.done ? 'checked' : ''}" data-i="${i}"></div>
-      <div class="today3-text ${!t.text ? 'placeholder' : ''}" data-i="${i}">${t.text || `${i+1}つ目を書く`}</div>
+      <div class="today3-text ${!t.text ? 'placeholder' : ''}" data-i="${i}">${escape(t.text) || `${i+1}つ目を書く`}</div>
+      ${t.text && !t.done ? `<button class="today3-now-btn" data-now="${i}">今これ</button>` : ''}
       ${t.text ? `<button class="today3-del" data-i="${i}">×</button>` : ''}
+      ${hasMeta ? `<div class="today3-meta-row">${deadlineMarkHtml(t.deadline)}${durationTagHtml(t.duration)}</div>` : ''}
     `;
     wrap.appendChild(row);
+
+    // ドラッグ（PC）
+    if (t.text) {
+      const handle = row.querySelector('[data-handle]');
+      row.draggable = false;
+      handle.addEventListener('mousedown', () => { row.draggable = true; });
+      row.addEventListener('dragstart', () => { t3DragSrc = i; row.classList.add('dragging'); });
+      row.addEventListener('dragend', () => { row.classList.remove('dragging'); row.draggable = false; });
+      row.addEventListener('dragover', e => { e.preventDefault(); row.classList.add('drag-over'); });
+      row.addEventListener('dragleave', () => row.classList.remove('drag-over'));
+      row.addEventListener('drop', e => {
+        e.preventDefault(); row.classList.remove('drag-over');
+        if (t3DragSrc === null || t3DragSrc === i) { t3DragSrc = null; return; }
+        const moved = state.today3.splice(t3DragSrc, 1)[0];
+        state.today3.splice(i, 0, moved);
+        t3DragSrc = null; saveData(); renderToday3();
+      });
+      // タッチ（モバイル）
+      let isDrag = false;
+      handle.addEventListener('touchstart', e => {
+        isDrag = true; t3DragSrc = i; row.classList.add('dragging'); e.preventDefault();
+      }, { passive: false });
+      handle.addEventListener('touchmove', e => {
+        if (!isDrag) return;
+        const tg = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+        const r = tg && tg.closest('.today3-item');
+        if (r && r !== row) {
+          wrap.querySelectorAll('.drag-over').forEach(x => x.classList.remove('drag-over'));
+          r.classList.add('drag-over');
+        }
+        e.preventDefault();
+      }, { passive: false });
+      handle.addEventListener('touchend', () => {
+        if (!isDrag) return; isDrag = false; row.classList.remove('dragging');
+        const over = wrap.querySelector('.drag-over');
+        if (over && t3DragSrc !== null) {
+          const ti = +over.dataset.i;
+          if (ti !== t3DragSrc) {
+            const moved = state.today3.splice(t3DragSrc, 1)[0];
+            state.today3.splice(ti, 0, moved);
+            saveData();
+          }
+        }
+        wrap.querySelectorAll('.drag-over').forEach(x => x.classList.remove('drag-over'));
+        t3DragSrc = null; renderToday3();
+      });
+    }
   });
+
+  // 所要時間合計＋詰め込み警告
+  const totalMin = state.today3
+    .filter(t => t.text && !t.done && t.duration)
+    .reduce((a, t) => a + t.duration, 0);
+  if (totalMin > 0) {
+    const sum = document.createElement('div');
+    sum.className = 'today3-sum' + (totalMin > 480 ? ' over' : '');
+    sum.textContent = `今日：合計${minToHm(totalMin)}` + (totalMin > 480 ? ' ← 詰め込みすぎ。減らせ。' : '');
+    wrap.appendChild(sum);
+  }
+
+  // チェック
   wrap.querySelectorAll('.check').forEach(el => {
     el.addEventListener('click', () => {
       const i = +el.dataset.i;
@@ -959,28 +1270,82 @@ function renderToday3() {
       saveData(); renderToday3();
     });
   });
+  // テキストタップ → 期限・所要時間込みの編集
   wrap.querySelectorAll('.today3-text').forEach(el => {
     el.addEventListener('click', () => {
       const i = +el.dataset.i;
-      openEditModal({
-        title: `今日絶対やる #${i+1}`,
-        value: state.today3[i].text,
-        placeholder: '今日絶対やるやつを書く',
-        onSave: v => {
-          state.today3[i].text = v.trim();
+      openTaskMetaModal(state.today3[i], r => {
+        if (!r.text) {
+          state.today3[i] = { id: id(), text: '', done: false, deadline: null, duration: null };
+        } else {
+          state.today3[i].text = r.text;
+          state.today3[i].deadline = r.deadline;
+          state.today3[i].duration = r.duration;
           state.today3[i].done = false;
-          saveData(); renderToday3();
         }
+        saveData(); renderToday3();
       });
     });
   });
+  // F: 今これ昇格
+  wrap.querySelectorAll('[data-now]').forEach(el => {
+    el.addEventListener('click', () => {
+      const i = +el.dataset.now;
+      const task = state.today3[i];
+      if (!task.text) return;
+      const promote = () => {
+        // 現NOWを今日3つの空きへ戻す
+        if (state.now) {
+          const empty = state.today3.findIndex(t => !t.text);
+          if (empty >= 0 && empty !== i) {
+            state.today3[empty] = { id: id(), text: state.now, done: false, deadline: null, duration: null };
+          } else {
+            // 空きがなければ昇格元スロットへ戻す
+            state.today3[i] = { id: id(), text: state.now, done: false, deadline: null, duration: null };
+            state.now = task.text;
+            saveData(); renderNow(); renderToday3();
+            return;
+          }
+        }
+        state.now = task.text;
+        state.today3[i] = { id: id(), text: '', done: false, deadline: null, duration: null };
+        saveData(); renderNow(); renderToday3();
+      };
+      if (state.now) {
+        confirmDialog('「今これ」は1つだけ。今のを今日3つに戻して、こちらを今これにする？', promote);
+      } else {
+        promote();
+      }
+    });
+  });
+  // 削除
   wrap.querySelectorAll('.today3-del').forEach(el => {
     el.addEventListener('click', () => {
       const i = +el.dataset.i;
-      state.today3[i] = { id: id(), text: '', done: false };
+      state.today3[i] = { id: id(), text: '', done: false, deadline: null, duration: null };
       saveData(); renderToday3();
     });
   });
+}
+
+// 確認ダイアログ（J/F用）
+function confirmDialog(message, onOk) {
+  const bg = document.createElement('div');
+  bg.className = 'modal-bg';
+  bg.innerHTML = `
+    <div class="modal">
+      <div class="modal-title">確認</div>
+      <div style="font-size:13px;color:#ddd;margin-bottom:12px;line-height:1.6;">${escape(message)}</div>
+      <div class="modal-footer">
+        <button class="modal-btn secondary" data-act="cancel">キャンセル</button>
+        <button class="modal-btn" data-act="ok">OK</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('modalContainer').appendChild(bg);
+  bg.querySelector('[data-act=ok]').addEventListener('click', () => { onOk(); bg.remove(); });
+  bg.querySelector('[data-act=cancel]').addEventListener('click', () => bg.remove());
+  bg.addEventListener('click', e => { if (e.target === bg) bg.remove(); });
 }
 
 // ========== 全部ここ入力バー ==========
@@ -1121,6 +1486,7 @@ function renderShigoto(c) {
     { key: 'shinkou', label: '進行中（A：今すぐ・動いてる）' },
     { key: 'tanemaki', label: '種まき（B：仕込み・C：いつか）' }
   ];
+  addDeadlineFilter(c, cols.map(col => 'shigoto.' + col.key));
   cols.forEach(col => {
     const sec = makeSection(col.label, state.shigoto[col.key].length);
     renderItemList(sec.body, state.shigoto[col.key], 'shigoto.' + col.key);
@@ -1167,6 +1533,7 @@ function renderOkane(c) {
     { key: 'miseikyu', label: '未請求（即請求）' },
     { key: 'mikaisyu', label: '未回収（週1確認）' }
   ];
+  addDeadlineFilter(c, cols.map(col => 'okane.' + col.key));
   cols.forEach(col => {
     const sec = makeSection(col.label, state.okane[col.key].length);
     renderItemList(sec.body, state.okane[col.key], 'okane.' + col.key);
@@ -1188,6 +1555,7 @@ function renderEigyou(c) {
     { key: 'b', label: 'B：見積・調整中（提案中の案件）' },
     { key: 'c', label: 'C：種まき（ツクリンク・新規開拓）' }
   ];
+  addDeadlineFilter(c, cols.map(col => 'eigyou.' + col.key));
   cols.forEach(col => {
     const sec = makeSection(col.label, state.eigyou[col.key].length);
     renderItemList(sec.body, state.eigyou[col.key], 'eigyou.' + col.key);
@@ -1204,6 +1572,7 @@ function renderEigyou(c) {
 // ----- 生活 -----
 function renderSeikatsu(c) {
   c.innerHTML = `<div class="helper">当たり前を人並みにこなすための領域。約束・予定・自分との約束。</div>`;
+  addDeadlineFilter(c, ['seikatsu.yakusoku', 'seikatsu.jibun', 'seikatsu.yarakashi']);
 
   // 今日の約束
   const sec1 = makeSection('今日の約束（人との約束・予定）', state.seikatsu.yakusoku.length);
@@ -1382,25 +1751,34 @@ NO多い → やらない</strong></div>
 }
 
 // ========== 共通アイテムリスト ==========
+let deadlineFilterPaths = {}; // path別フィルタON/OFF
 function renderItemList(body, arr, path) {
-  if (arr.length === 0) {
+  const filterOn = !!deadlineFilterPaths[path];
+  let view = arr;
+  if (filterOn) view = arr.filter(x => x.deadline);
+  if (view.length === 0) {
     const e = document.createElement('div');
     e.className = 'empty-state';
-    e.textContent = '空っぽ';
+    e.textContent = filterOn ? '期限つきなし' : '空っぽ';
     body.appendChild(e);
     return;
   }
-  arr.forEach((item, idx) => {
+  view.forEach((item) => {
+    const idx = arr.indexOf(item);
+    if (item.deadline === undefined) item.deadline = null;
+    if (item.duration === undefined) item.duration = null;
     const d = document.createElement('div');
     d.className = 'item';
     d.dataset.id = item.id;
     d.dataset.path = path;
     d.dataset.idx = idx;
     d.draggable = true;
+    const metaLine = (item.deadline || (item.duration !== null && item.duration !== undefined))
+      ? `${deadlineMarkHtml(item.deadline)}${durationTagHtml(item.duration)}` : '';
     d.innerHTML = `
       <div class="item-drag">⋮⋮</div>
       <div class="item-text ${item.done ? 'done' : ''}">${escape(item.text)}
-        <div class="item-meta">${timeAgo(item.ts)}</div>
+        <div class="item-meta">${metaLine}${timeAgo(item.ts)}</div>
       </div>
       <div class="item-actions">
         <button class="iconbtn" data-act="check">${item.done ? '↻' : '✓'}</button>
@@ -1424,6 +1802,7 @@ function renderItemList(body, arr, path) {
       e.preventDefault();
       d.classList.remove('drag-over');
       if (!dragSrc || dragSrc.path !== path) { dragSrc = null; return; }
+      if (deadlineFilterPaths[path]) { dragSrc = null; return; }
       const src = dragSrc.idx;
       if (src === idx) return;
       const moved = arr.splice(src, 1)[0];
@@ -1437,18 +1816,15 @@ function renderItemList(body, arr, path) {
       saveData(); renderContent(); updateBadges();
     });
     d.querySelector('[data-act=edit]').addEventListener('click', () => {
-      openEditModal({
-        title: '編集',
-        value: item.text,
-        placeholder: '',
-        onSave: v => {
-          item.text = v.trim();
-          if (!item.text) {
-            const i = arr.findIndex(x => x.id === item.id);
-            if (i >= 0) arr.splice(i, 1);
-          }
-          saveData(); renderContent(); updateBadges();
+      openTaskMetaModal(item, r => {
+        item.text = r.text;
+        item.deadline = r.deadline;
+        item.duration = r.duration;
+        if (!item.text) {
+          const i = arr.findIndex(x => x.id === item.id);
+          if (i >= 0) arr.splice(i, 1);
         }
+        saveData(); renderContent(); updateBadges();
       });
     });
     d.querySelector('[data-act=move]').addEventListener('click', () => {
@@ -1532,6 +1908,19 @@ function makeSection(title, count, collapsed = false) {
   return { section, body };
 }
 
+function addDeadlineFilter(container, paths) {
+  const btn = document.createElement('button');
+  const anyOn = paths.some(p => deadlineFilterPaths[p]);
+  btn.className = 'deadline-filter' + (anyOn ? ' active' : '');
+  btn.textContent = anyOn ? '🔴 期限つきのみ表示中' : '📅 期限つきだけ見る';
+  btn.addEventListener('click', () => {
+    const turnOn = !anyOn;
+    paths.forEach(p => deadlineFilterPaths[p] = turnOn);
+    renderContent();
+  });
+  container.appendChild(btn);
+}
+
 function addMiniAdd(body, onAdd) {
   const b = document.createElement('button');
   b.className = 'miniadd';
@@ -1557,10 +1946,16 @@ function addToTarget(target, text) {
   const obj = { id: id(), text, ts: Date.now() };
   if (target === 'today3') {
     const empty = state.today3.findIndex(t => !t.text);
-    if (empty >= 0) state.today3[empty] = { id: id(), text, done: false };
-    else state.today3.push({ id: id(), text, done: false });
+    if (empty >= 0) state.today3[empty] = { id: id(), text, done: false, deadline: null, duration: null };
+    else state.today3.push({ id: id(), text, done: false, deadline: null, duration: null });
   } else if (target === 'now') {
+    // J: NOWは1つだけ。既存があれば今日3つの空きへ退避
+    if (state.now) {
+      const empty = state.today3.findIndex(t => !t.text);
+      if (empty >= 0) state.today3[empty] = { id: id(), text: state.now, done: false, deadline: null, duration: null };
+    }
     state.now = text;
+    renderNow();
   } else {
     const [tab, col] = target.split('.');
     if (state[tab] && state[tab][col]) state[tab][col].unshift(obj);
@@ -1679,10 +2074,314 @@ function timeAgo(ts) {
   return `${d}日前`;
 }
 
+// ========== v9第1弾: 期限・所要時間ユーティリティ ==========
+function todayISO() { return new Date().toISOString().slice(0,10); }
+function addDaysISO(n) {
+  const d = new Date();
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0,10);
+}
+// 今週の金曜
+function fridayISO() {
+  const d = new Date();
+  const diff = (5 - d.getDay() + 7) % 7; // 0=日 5=金
+  d.setDate(d.getDate() + diff);
+  return d.toISOString().slice(0,10);
+}
+// 来週末（来週の日曜）
+function nextWeekendISO() {
+  const d = new Date();
+  const diff = (7 - d.getDay()) % 7 + 7; // 次の次の日曜方向
+  d.setDate(d.getDate() + ((0 - d.getDay() + 7) % 7) + 7);
+  return d.toISOString().slice(0,10);
+}
+// 月末
+function monthEndISO() {
+  const d = new Date();
+  const e = new Date(d.getFullYear(), d.getMonth()+1, 0);
+  return e.toISOString().slice(0,10);
+}
+// 期限マークHTML
+function deadlineMarkHtml(deadline) {
+  if (!deadline) return '';
+  const t = todayISO();
+  let cls, label;
+  if (deadline < t) { cls = 'over'; label = '🔴期限切れ'; }
+  else if (deadline === t) { cls = 'today'; label = '🟡今日'; }
+  else {
+    cls = 'future';
+    const md = deadline.slice(5).replace('-', '/');
+    label = '🟢' + md;
+  }
+  return `<span class="deadline-mark ${cls}">${label}</span>`;
+}
+// 所要時間
+const DURATION_PRESETS = [
+  { label: '5分', min: 5 }, { label: '15分', min: 15 }, { label: '30分', min: 30 },
+  { label: '1h', min: 60 }, { label: '2h', min: 120 }, { label: '半日', min: 240 },
+  { label: '1日', min: 480 }, { label: '不明', min: 0 }
+];
+function durationLabel(min) {
+  if (min === null || min === undefined) return '';
+  if (min === 0) return '不明';
+  if (min === 240) return '半日';
+  if (min === 480) return '1日';
+  if (min < 60) return `${min}分`;
+  const h = Math.floor(min / 60), m = min % 60;
+  return m ? `${h}h${m}m` : `${h}h`;
+}
+function durationTagHtml(min) {
+  const l = durationLabel(min);
+  return l ? `<span class="duration-tag">⏱${l}</span>` : '';
+}
+function minToHm(min) {
+  if (!min) return '0m';
+  const h = Math.floor(min / 60), m = min % 60;
+  if (h && m) return `${h}h${m}m`;
+  if (h) return `${h}h`;
+  return `${m}m`;
+}
+
+// ========== I: 状態スキャン（HP/ノイズ） ==========
+function latestStatus() {
+  if (!state.status || state.status.length === 0) return null;
+  return state.status[state.status.length - 1];
+}
+function renderVital() {
+  const s = latestStatus();
+  const hpEl = document.getElementById('hpVal');
+  const noiseEl = document.getElementById('noiseVal');
+  hpEl.className = 'vital-chip-val';
+  noiseEl.className = 'vital-chip-val';
+  if (s) {
+    hpEl.textContent = s.hp + '%';
+    noiseEl.textContent = s.noise + '%';
+    if (s.hp <= 30) hpEl.classList.add('hp-low');
+    else if (s.hp <= 50) hpEl.classList.add('hp-mid');
+    else hpEl.classList.add('hp-ok');
+    if (s.noise >= 60) noiseEl.classList.add('noise-high');
+  } else {
+    hpEl.textContent = '--';
+    noiseEl.textContent = '--';
+  }
+  // 睡眠
+  const sleepEl = document.getElementById('sleepVal');
+  const todaySleep = (state.sleep || []).filter(x => x.date === todayISO())
+    .reduce((a, b) => a + b.minutes, 0);
+  sleepEl.textContent = todaySleep > 0 ? minToHm(todaySleep) : '--';
+  // メッセージ
+  const msg = document.getElementById('vitalMsg');
+  if (s && s.hp <= 30) {
+    msg.innerHTML = '<div class="vital-msg low">HP低め。今日は最小版でOK。1個だけ動かせば勝ち。</div>';
+  } else if (s && s.hp <= 50) {
+    msg.innerHTML = '<div class="vital-msg mid">HP半分。簡易版で進めよう。詰め込まない。</div>';
+  } else {
+    msg.innerHTML = '';
+  }
+}
+function openStatusModal() {
+  const s = latestStatus();
+  const initHp = s ? s.hp : 70;
+  const initNoise = s ? s.noise : 30;
+  const bg = document.createElement('div');
+  bg.className = 'modal-bg';
+  bg.innerHTML = `
+    <div class="modal">
+      <div class="modal-title">いまの状態スキャン</div>
+      <div class="slider-row">
+        <div class="slider-row-label"><span>HP（残量）</span><span id="hpDisp">${initHp}%</span></div>
+        <input type="range" min="0" max="100" step="5" value="${initHp}" class="vital-slider" id="hpSlider">
+      </div>
+      <div class="slider-row">
+        <div class="slider-row-label"><span>ノイズ（頭の騒がしさ）</span><span id="noiseDisp">${initNoise}%</span></div>
+        <input type="range" min="0" max="100" step="5" value="${initNoise}" class="vital-slider" id="noiseSlider">
+      </div>
+      <textarea class="modal-input" id="statusMemo" placeholder="一言メモ（任意）" style="min-height:50px;"></textarea>
+      ${statusGraphHtml()}
+      <div class="modal-footer">
+        <button class="modal-btn secondary" data-act="cancel">閉じる</button>
+        <button class="modal-btn" data-act="save">記録</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('modalContainer').appendChild(bg);
+  const hpS = bg.querySelector('#hpSlider'), noiseS = bg.querySelector('#noiseSlider');
+  hpS.addEventListener('input', () => bg.querySelector('#hpDisp').textContent = hpS.value + '%');
+  noiseS.addEventListener('input', () => bg.querySelector('#noiseDisp').textContent = noiseS.value + '%');
+  bg.querySelector('[data-act=save]').addEventListener('click', () => {
+    state.status.push({
+      date: todayISO(), timestamp: Date.now(),
+      hp: +hpS.value, noise: +noiseS.value,
+      memo: bg.querySelector('#statusMemo').value.trim()
+    });
+    if (state.status.length > 100) state.status = state.status.slice(-100);
+    saveData(); renderVital(); bg.remove();
+  });
+  bg.querySelector('[data-act=cancel]').addEventListener('click', () => bg.remove());
+  bg.addEventListener('click', e => { if (e.target === bg) bg.remove(); });
+}
+// 過去7日の最新HP/ノイズ推移
+function statusGraphHtml() {
+  const days = [];
+  for (let i = 6; i >= 0; i--) days.push(addDaysISO(-i));
+  let cols = '';
+  days.forEach(d => {
+    const recs = (state.status || []).filter(x => x.date === d);
+    const last = recs.length ? recs[recs.length - 1] : null;
+    const hpH = last ? Math.max(2, last.hp * 0.5) : 0;
+    const noiseH = last ? Math.max(2, last.noise * 0.5) : 0;
+    cols += `<div class="mini-graph-col">
+      <div class="mini-bar hp" style="height:${hpH}px"></div>
+      <div class="mini-bar noise" style="height:${noiseH}px"></div>
+      <div class="mini-graph-day">${d.slice(8)}</div>
+    </div>`;
+  });
+  return `<div style="font-size:10px;color:#888;margin-top:6px;">過去7日（🟩HP / 🟥ノイズ）</div><div class="mini-graph">${cols}</div>`;
+}
+document.getElementById('chipHp').addEventListener('click', openStatusModal);
+document.getElementById('chipNoise').addEventListener('click', openStatusModal);
+
+// ========== D: 睡眠記録 ==========
+const SLEEP_PRESETS = [5,10,15,30,60,120,180,240,300,360,420,480];
+function openSleepModal() {
+  const bg = document.createElement('div');
+  bg.className = 'modal-bg';
+  const todayTotal = (state.sleep || []).filter(x => x.date === todayISO())
+    .reduce((a,b)=>a+b.minutes,0);
+  let presetHtml = '';
+  SLEEP_PRESETS.forEach(m => {
+    presetHtml += `<button class="preset-btn" data-min="${m}">${minToHm(m)}</button>`;
+  });
+  bg.innerHTML = `
+    <div class="modal">
+      <div class="modal-title">🛌 睡眠を記録（足し算でOK）</div>
+      <div style="font-size:11px;color:#888;margin-bottom:8px;">今日の合計: <strong style="color:#7ac0ff;">${minToHm(todayTotal)}</strong>　二度寝・昼寝も足していい</div>
+      <div class="preset-grid">${presetHtml}</div>
+      <div class="custom-row">
+        <input type="number" class="num" id="sleepNum" placeholder="数字" inputmode="decimal">
+        <select id="sleepUnit"><option value="min">分</option><option value="hour">時間</option></select>
+        <button class="preset-btn active" id="sleepAddCustom">足す</button>
+      </div>
+      ${sleepListHtml()}
+      <div class="modal-footer">
+        <button class="modal-btn secondary" data-act="cancel">閉じる</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('modalContainer').appendChild(bg);
+  const addSleep = (min) => {
+    if (!min || min <= 0) return;
+    const ex = state.sleep.find(x => x.date === todayISO());
+    if (ex) ex.minutes += min;
+    else state.sleep.push({ date: todayISO(), minutes: min });
+    if (state.sleep.length > 90) state.sleep = state.sleep.slice(-90);
+    saveData(); renderVital(); bg.remove(); openSleepModal();
+  };
+  bg.querySelectorAll('.preset-btn[data-min]').forEach(b =>
+    b.addEventListener('click', () => addSleep(+b.dataset.min)));
+  bg.querySelector('#sleepAddCustom').addEventListener('click', () => {
+    const v = parseFloat(bg.querySelector('#sleepNum').value);
+    if (isNaN(v)) return;
+    const unit = bg.querySelector('#sleepUnit').value;
+    addSleep(unit === 'hour' ? Math.round(v * 60) : Math.round(v));
+  });
+  bg.querySelector('[data-act=cancel]').addEventListener('click', () => bg.remove());
+  bg.addEventListener('click', e => { if (e.target === bg) bg.remove(); });
+}
+function sleepListHtml() {
+  const days = [];
+  for (let i = 0; i < 7; i++) days.push(addDaysISO(-i));
+  let rows = '';
+  let maxBar = 0;
+  const vals = days.map(d => (state.sleep||[]).filter(x=>x.date===d).reduce((a,b)=>a+b.minutes,0));
+  maxBar = Math.max(480, ...vals);
+  // バーグラフ
+  let cols = '';
+  for (let i = 6; i >= 0; i--) {
+    const d = days[i], v = vals[i];
+    const h = v ? Math.max(2, (v / maxBar) * 50) : 0;
+    cols += `<div class="mini-graph-col"><div class="mini-bar sleep" style="height:${h}px"></div><div class="mini-graph-day">${d.slice(8)}</div></div>`;
+  }
+  // 一覧
+  days.forEach((d, i) => {
+    if (vals[i] > 0) rows += `<div class="sleep-list-row"><span>${d.slice(5).replace('-','/')}</span><span>${minToHm(vals[i])}</span></div>`;
+  });
+  return `<div style="font-size:10px;color:#888;margin-top:8px;">過去7日</div><div class="mini-graph">${cols}</div>${rows}`;
+}
+document.getElementById('chipSleep').addEventListener('click', openSleepModal);
+
+// ========== A/C: 期限・所要時間の編集モーダル（today3用） ==========
+function openTaskMetaModal(task, onSave) {
+  const bg = document.createElement('div');
+  bg.className = 'modal-bg';
+  const dlPresets = [
+    { label: '今日', val: todayISO() },
+    { label: '明日', val: addDaysISO(1) },
+    { label: '今週中(金)', val: fridayISO() },
+    { label: '来週末', val: nextWeekendISO() },
+    { label: '月末', val: monthEndISO() },
+    { label: '期限なし', val: null }
+  ];
+  let dlHtml = '';
+  dlPresets.forEach((p,i) => {
+    const active = (task.deadline === p.val) || (p.val === null && !task.deadline) ? ' active' : '';
+    dlHtml += `<button class="preset-btn${active}" data-dl="${p.val === null ? '' : p.val}">${p.label}</button>`;
+  });
+  let durHtml = '';
+  DURATION_PRESETS.forEach(p => {
+    const active = task.duration === p.min ? ' active' : '';
+    durHtml += `<button class="preset-btn${active}" data-dur="${p.min}">${p.label}</button>`;
+  });
+  bg.innerHTML = `
+    <div class="modal">
+      <div class="modal-title">${escape(task.text || 'タスク')} の設定</div>
+      <textarea class="modal-input" id="metaText" placeholder="内容" style="min-height:50px;">${escape(task.text)}</textarea>
+      <div style="font-size:11px;color:#aaa;font-weight:700;margin-bottom:4px;">📅 期限</div>
+      <div class="preset-grid" id="dlGrid">${dlHtml}</div>
+      <div class="custom-row">
+        <input type="date" class="num" id="dlDate" value="${task.deadline || ''}">
+      </div>
+      <div style="font-size:11px;color:#aaa;font-weight:700;margin-bottom:4px;">⏱ 所要時間</div>
+      <div class="preset-grid" id="durGrid">${durHtml}</div>
+      <div class="modal-footer">
+        <button class="modal-btn secondary" data-act="cancel">キャンセル</button>
+        <button class="modal-btn" data-act="save">保存</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('modalContainer').appendChild(bg);
+  let selDeadline = task.deadline || null;
+  let selDuration = (task.duration === undefined ? null : task.duration);
+  const dlDate = bg.querySelector('#dlDate');
+  bg.querySelectorAll('[data-dl]').forEach(b => b.addEventListener('click', () => {
+    bg.querySelectorAll('[data-dl]').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    selDeadline = b.dataset.dl || null;
+    dlDate.value = selDeadline || '';
+  }));
+  dlDate.addEventListener('change', () => {
+    selDeadline = dlDate.value || null;
+    bg.querySelectorAll('[data-dl]').forEach(x => x.classList.remove('active'));
+  });
+  bg.querySelectorAll('[data-dur]').forEach(b => b.addEventListener('click', () => {
+    bg.querySelectorAll('[data-dur]').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    selDuration = +b.dataset.dur;
+  }));
+  bg.querySelector('[data-act=save]').addEventListener('click', () => {
+    const txt = bg.querySelector('#metaText').value.trim();
+    onSave({ text: txt, deadline: selDeadline, duration: selDuration });
+    bg.remove();
+  });
+  bg.querySelector('[data-act=cancel]').addEventListener('click', () => bg.remove());
+  bg.addEventListener('click', e => { if (e.target === bg) bg.remove(); });
+}
+
 // ========== 初期化 ==========
 checkDailyReset();
 renderNow();
 renderToday3();
+renderVital();
 updateBadges();
 renderContent();
 // クラウド（スプシ）から最新データを取得して上書き
