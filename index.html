@@ -1031,6 +1031,7 @@ function loadFromCloud() {
         return;
       }
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+      migrateState();
       // 画面再描画
       renderNow();
       renderToday3();
@@ -1079,15 +1080,96 @@ function getDefaultData() {
       lastDate: ''
     },
     adhd: { trigger: [], log: [] },
+    rules: null,   // null=未初期化。初回マイグレーションでDEFAULT_RULESを投入
     trash: [],
     lastReset: ''
   };
+}
+
+// 編集可能トリガーの初期値（既存の固定10個）
+function defaultTriggers() {
+  return [
+    '起きた → 今日3つを書く',
+    '仕事来た → ①今/②今日/③待ち/④未来 に振る',
+    '車 → 電話orメモ',
+    '現場着 → 5分俯瞰',
+    '作業 → タイマー',
+    'タイマー鳴る → 俯瞰',
+    '悩み → 思考ダンプ',
+    '隙間 → ②今日 or ③待ち処理',
+    '終わり → ④未来A/B/C触る',
+    '寝る前 → 軽く確認'
+  ].map(t => ({ id: id(), text: t, ts: Date.now() }));
+}
+
+// 編集可能ルールの初期値（既存の固定ブロック）
+function defaultRules() {
+  return [
+    { id: id(), title: '判断ルール', collapsed: false, text:
+`1. 仕事の振り分け
+① 5分以内で終わる？ → 今やる
+② 今日中に必要？ → ①今日3つ
+③ 誰か絡んでる？ → 仕事タブ「待ち」
+④ それ以外 → 営業タブ
+
+2. 振る/自分でやる
+・俺じゃないと無理？ → YESならやる
+・それ以外 → 振る
+※作業・雑務は基本振る` },
+    { id: id(), title: '仕事判断', collapsed: false, text:
+`・利益出る？
+・楽？
+・繋がる？
+
+YES多い → やる
+NO多い → やらない` },
+    { id: id(), title: 'お金ルール', collapsed: false, text:
+`・未請求は即請求
+・終わったら翌日請求
+・未回収は週1確認
+・迷ったら請求する` },
+    { id: id(), title: '絶対ルール', collapsed: false, text:
+`・迷ったらメモ開く
+・全部ここに書く（頭に残さない）
+・今やってるは1つだけ
+・ながら禁止
+・タイマーで切る
+・1日3つでいい
+・営業A/B/C毎日触る
+・最低5分やる
+・完璧にやらない` },
+    { id: id(), title: 'SNSルール', collapsed: true, text:
+`・今やってる時は絶対禁止
+・タイマー中は絶対禁止
+・見るなら隙間5分だけ
+・迷ったら見ない` }
+  ];
 }
 function id() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 }
 
 let state = loadData();
+
+// ===== マイグレーション（既存データを壊さず、未初期化なら初期値投入）=====
+function migrateState() {
+  let changed = false;
+  if (!state.adhd) { state.adhd = { trigger: [], log: [] }; changed = true; }
+  if (!Array.isArray(state.adhd.trigger)) { state.adhd.trigger = []; changed = true; }
+  if (!Array.isArray(state.adhd.log)) { state.adhd.log = []; changed = true; }
+  if (state.adhd.trigger.length === 0 && !state._trigInit) {
+    state.adhd.trigger = defaultTriggers();
+    state._trigInit = true;
+    changed = true;
+  }
+  if (!Array.isArray(state.rules)) {
+    state.rules = defaultRules();
+    changed = true;
+  }
+  if (changed) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){} }
+}
+migrateState();
+
 let currentTab = 'zenbu';
 let currentTag = 'なんでも';
 let editingItem = null;
@@ -1553,7 +1635,7 @@ function renderEigyou(c) {
   const cols = [
     { key: 'a', label: 'A：今すぐ金（直近で売上になる）' },
     { key: 'b', label: 'B：見積・調整中（提案中の案件）' },
-    { key: 'c', label: 'C：種まき（ツクリンク・新規開拓）' }
+    { key: 'c', label: 'C：種まき（新規開拓）' }
   ];
   addDeadlineFilter(c, cols.map(col => 'eigyou.' + col.key));
   cols.forEach(col => {
@@ -1670,89 +1752,104 @@ function renderAdhd(c) {
   });
   c.appendChild(sec1.section);
 
-  // トリガーリスト
-  const sec2 = makeSection('トリガー（迷ったら見る）', null, true);
-  sec2.body.innerHTML = `
-    <div class="rule-text">起きた → <strong>今日3つを書く</strong>
-仕事来た → <strong>①今/②今日/③待ち/④未来</strong> に振る
-車 → 電話orメモ
-現場着 → <strong>5分俯瞰</strong>
-作業 → <strong>タイマー</strong>
-タイマー鳴る → 俯瞰
-悩み → 思考ダンプ
-隙間 → ②今日 or ③待ち処理
-終わり → ④未来A/B/C触る
-寝る前 → 軽く確認</div>
-  `;
+  // トリガーリスト（編集可能：日々の気づきで育てる）
+  const sec2 = makeSection('トリガー（これやったらこれ／迷ったら見る）', state.adhd.trigger.length, true);
+  renderItemList(sec2.body, state.adhd.trigger, 'adhd.trigger', { simple: true });
+  addMiniAdd(sec2.body, () => {
+    promptAdd('トリガー追加（例: タイマー鳴った → 俯瞰）', txt => {
+      state.adhd.trigger.push({ id: id(), text: txt, ts: Date.now() });
+      saveData(); renderContent(); updateBadges();
+    });
+  });
   c.appendChild(sec2.section);
 }
 
 // ----- ルール -----
 function renderRule(c) {
-  c.innerHTML = `<div class="helper">迷った時だけ見る。編集可能。</div>`;
+  c.innerHTML = `<div class="helper">迷った時だけ見る。各ルールの ✎ で文章ごと直せる。</div>`;
+  if (!Array.isArray(state.rules)) state.rules = defaultRules();
 
-  const sec1 = makeSection('判断ルール', null);
-  sec1.body.innerHTML = `
-    <div class="rule-text"><strong>1. 仕事の振り分け</strong>
-① 5分以内で終わる？ → 今やる
-② 今日中に必要？ → ①今日3つ
-③ 誰か絡んでる？ → 仕事タブ「待ち」
-④ それ以外 → 営業タブ
+  state.rules.forEach(rule => {
+    const sec = makeSection(rule.title, null, !!rule.collapsed);
+    // 見出しの折りたたみ状態を保存
+    sec.section.querySelector('.section-header').addEventListener('click', () => {
+      rule.collapsed = sec.section.classList.contains('collapsed');
+      saveData();
+    });
+    // 本文
+    const txt = document.createElement('div');
+    txt.className = 'rule-text';
+    txt.textContent = rule.text;
+    sec.body.appendChild(txt);
+    // 編集・削除ボタン
+    const bar = document.createElement('div');
+    bar.style.cssText = 'display:flex;gap:8px;margin-top:8px;';
+    bar.innerHTML = `
+      <button class="preset-btn" data-act="edit">✎ このルールを直す</button>
+      <button class="preset-btn clear" data-act="del">削除</button>
+    `;
+    bar.querySelector('[data-act=edit]').addEventListener('click', e => {
+      e.stopPropagation();
+      openRuleEditModal(rule);
+    });
+    bar.querySelector('[data-act=del]').addEventListener('click', e => {
+      e.stopPropagation();
+      confirmDialog(`「${rule.title}」を削除する？`, () => {
+        state.rules = state.rules.filter(r => r.id !== rule.id);
+        saveData(); renderContent();
+      });
+    });
+    sec.body.appendChild(bar);
+    c.appendChild(sec.section);
+  });
 
-<strong>2. 振る/自分でやる</strong>
-・俺じゃないと無理？ → YESならやる
-・それ以外 → 振る
-※作業・雑務は基本振る</div>
+  // 新規ルール追加
+  const addBtn = document.createElement('button');
+  addBtn.className = 'miniadd';
+  addBtn.textContent = '＋ ルールを追加';
+  addBtn.addEventListener('click', () => {
+    openRuleEditModal({ id: id(), title: '', text: '', collapsed: false }, true);
+  });
+  c.appendChild(addBtn);
+}
+
+// ルールのブロック編集モーダル（タイトル＋本文）
+function openRuleEditModal(rule, isNew) {
+  const bg = document.createElement('div');
+  bg.className = 'modal-bg';
+  bg.innerHTML = `
+    <div class="modal">
+      <div class="modal-title">${isNew ? 'ルールを追加' : 'ルールを直す'}</div>
+      <input type="text" class="num" id="ruleTitle" placeholder="見出し（例: お金ルール）" value="${escape(rule.title)}" style="width:100%;margin-bottom:10px;">
+      <textarea class="modal-input" id="ruleBody" placeholder="ルールの中身（改行OK）" style="min-height:160px;">${escape(rule.text)}</textarea>
+      <div class="modal-footer">
+        <button class="modal-btn secondary" data-act="cancel">キャンセル</button>
+        <button class="modal-btn" data-act="save">保存</button>
+      </div>
+    </div>
   `;
-  c.appendChild(sec1.section);
-
-  const sec2 = makeSection('仕事判断', null);
-  sec2.body.innerHTML = `
-    <div class="rule-text">・利益出る？
-・楽？
-・繋がる？
-
-<strong>YES多い → やる
-NO多い → やらない</strong></div>
-  `;
-  c.appendChild(sec2.section);
-
-  const sec3 = makeSection('お金ルール', null);
-  sec3.body.innerHTML = `
-    <div class="rule-text">・未請求は<strong>即請求</strong>
-・終わったら<strong>翌日請求</strong>
-・未回収は<strong>週1確認</strong>
-・迷ったら<strong>請求する</strong></div>
-  `;
-  c.appendChild(sec3.section);
-
-  const sec4 = makeSection('絶対ルール', null);
-  sec4.body.innerHTML = `
-    <div class="rule-text">・迷ったらメモ開く
-・全部ここに書く（頭に残さない）
-・今やってるは<strong>1つだけ</strong>
-・ながら禁止
-・タイマーで切る
-・1日3つでいい
-・営業A/B/C毎日触る
-・最低5分やる
-・<strong>完璧にやらない</strong></div>
-  `;
-  c.appendChild(sec4.section);
-
-  const sec5 = makeSection('SNSルール', null, true);
-  sec5.body.innerHTML = `
-    <div class="rule-text">・今やってる時は<strong>絶対禁止</strong>
-・タイマー中は<strong>絶対禁止</strong>
-・見るなら隙間5分だけ
-・迷ったら見ない</div>
-  `;
-  c.appendChild(sec5.section);
+  document.getElementById('modalContainer').appendChild(bg);
+  bg.querySelector('[data-act=save]').addEventListener('click', () => {
+    const title = bg.querySelector('#ruleTitle').value.trim();
+    const text = bg.querySelector('#ruleBody').value.trim();
+    if (!title && !text) { bg.remove(); return; }
+    rule.title = title || '(無題)';
+    rule.text = text;
+    if (isNew) {
+      if (!Array.isArray(state.rules)) state.rules = [];
+      state.rules.push(rule);
+    }
+    saveData(); renderContent(); bg.remove();
+  });
+  bg.querySelector('[data-act=cancel]').addEventListener('click', () => bg.remove());
+  bg.addEventListener('click', e => { if (e.target === bg) bg.remove(); });
 }
 
 // ========== 共通アイテムリスト ==========
 let deadlineFilterPaths = {}; // path別フィルタON/OFF
-function renderItemList(body, arr, path) {
+function renderItemList(body, arr, path, opts) {
+  opts = opts || {};
+  const simple = !!opts.simple;
   const filterOn = !!deadlineFilterPaths[path];
   let view = arr;
   if (filterOn) view = arr.filter(x => x.deadline);
@@ -1773,18 +1870,22 @@ function renderItemList(body, arr, path) {
     d.dataset.path = path;
     d.dataset.idx = idx;
     d.draggable = true;
-    const metaLine = (item.deadline || (item.duration !== null && item.duration !== undefined))
+    const metaLine = (!simple && (item.deadline || (item.duration !== null && item.duration !== undefined)))
       ? `${deadlineMarkHtml(item.deadline)}${durationTagHtml(item.duration)}` : '';
+    const actionsHtml = simple
+      ? `<button class="iconbtn" data-act="edit">✎</button>
+         <button class="iconbtn" data-act="del">×</button>`
+      : `<button class="iconbtn" data-act="check">${item.done ? '↻' : '✓'}</button>
+         <button class="iconbtn" data-act="edit">✎</button>
+         <button class="iconbtn" data-act="move">→</button>
+         <button class="iconbtn" data-act="del">×</button>`;
     d.innerHTML = `
       <div class="item-drag">⋮⋮</div>
       <div class="item-text ${item.done ? 'done' : ''}">${escape(item.text)}
-        <div class="item-meta">${metaLine}${timeAgo(item.ts)}</div>
+        ${simple ? '' : `<div class="item-meta">${metaLine}${timeAgo(item.ts)}</div>`}
       </div>
       <div class="item-actions">
-        <button class="iconbtn" data-act="check">${item.done ? '↻' : '✓'}</button>
-        <button class="iconbtn" data-act="edit">✎</button>
-        <button class="iconbtn" data-act="move">→</button>
-        <button class="iconbtn" data-act="del">×</button>
+        ${actionsHtml}
       </div>
     `;
     // DnD
@@ -1811,23 +1912,39 @@ function renderItemList(body, arr, path) {
       saveData(); renderContent();
     });
     // ボタン
-    d.querySelector('[data-act=check]').addEventListener('click', () => {
+    const checkBtn = d.querySelector('[data-act=check]');
+    if (checkBtn) checkBtn.addEventListener('click', () => {
       item.done = !item.done;
       saveData(); renderContent(); updateBadges();
     });
     d.querySelector('[data-act=edit]').addEventListener('click', () => {
-      openTaskMetaModal(item, r => {
-        item.text = r.text;
-        item.deadline = r.deadline;
-        item.duration = r.duration;
-        if (!item.text) {
-          const i = arr.findIndex(x => x.id === item.id);
-          if (i >= 0) arr.splice(i, 1);
-        }
-        saveData(); renderContent(); updateBadges();
-      });
+      if (simple) {
+        openEditModal({
+          title: '編集', value: item.text, placeholder: '',
+          onSave: v => {
+            item.text = v.trim();
+            if (!item.text) {
+              const i = arr.findIndex(x => x.id === item.id);
+              if (i >= 0) arr.splice(i, 1);
+            }
+            saveData(); renderContent(); updateBadges();
+          }
+        });
+      } else {
+        openTaskMetaModal(item, r => {
+          item.text = r.text;
+          item.deadline = r.deadline;
+          item.duration = r.duration;
+          if (!item.text) {
+            const i = arr.findIndex(x => x.id === item.id);
+            if (i >= 0) arr.splice(i, 1);
+          }
+          saveData(); renderContent(); updateBadges();
+        });
+      }
     });
-    d.querySelector('[data-act=move]').addEventListener('click', () => {
+    const moveBtn = d.querySelector('[data-act=move]');
+    if (moveBtn) moveBtn.addEventListener('click', () => {
       openMoveModal(item.text, target => {
         addToTarget(target, item.text);
         const i = arr.findIndex(x => x.id === item.id);
