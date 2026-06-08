@@ -26,7 +26,7 @@
   }
   button { cursor: pointer; }
 
-  /* ===== 固定ヘッダー ===== */
+  /* ===== 上部固定エリア ===== */
   .fixed-top {
     position: sticky;
     top: 0;
@@ -82,6 +82,7 @@
 
   /* NOWカード */
   .now-card {
+    flex-shrink: 0;
     margin: 8px 12px;
     padding: 12px 14px;
     background: linear-gradient(135deg, #1a3a5c 0%, #1a4a3c 100%);
@@ -123,6 +124,7 @@
 
   /* 今日絶対3つ */
   .today3 {
+    flex-shrink: 0;
     margin: 8px 12px 10px;
     padding: 10px 12px;
     background: #1c1c1e;
@@ -233,96 +235,151 @@
   }
   .tab:not(.active) .badge.zero { display: none; }
 
-  /* ===== コンテンツエリア ===== */
-  .content {
-    padding: 8px 12px 120px;
+  /* ===== 中間固定エリア（今日やること・やること） ===== */
+  #mainArea {
+    border-bottom: 1px solid #2a2a2c;
   }
+  /* ===== タブバー ===== */
+  #mainTabs {
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    background: #0f0f10;
+    border-bottom: 1px solid #2a2a2c;
+    padding: 6px 12px !important;
+    margin-bottom: 0 !important;
+  }
+  /* ===== タブコンテンツ ===== */
+  .content {
+    padding: 8px 12px 80px;
+  }
+  /* やることサブタブ */
+  .yarukoto-tabs {
+    display: flex;
+    gap: 5px;
+    padding: 5px 12px 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    background: #0f0f10;
+    border-top: 1px solid #1e1e20;
+  }
+  .yarukoto-tabs::-webkit-scrollbar { display: none; }
+  .ytab {
+    flex-shrink: 0;
+    padding: 4px 10px;
+    border-radius: 12px;
+    background: #1c1c1e;
+    border: 1px solid #2a2a2c;
+    font-size: 11px;
+    color: #999;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .ytab.active {
+    background: #2a5a3c;
+    color: #4ade80;
+    border-color: #2a5a3c;
+  }
+  .ytab .badge {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    padding: 0px 5px;
+    border-radius: 6px;
+    font-size: 9px;
+    font-weight: 700;
+  }
+  .ytab:not(.active) .badge.zero { display: none; }
   .section {
     background: #1c1c1e;
-    border-radius: 12px;
-    margin-bottom: 10px;
+    border-radius: 8px;
+    margin-bottom: 6px;
     border: 1px solid #2a2a2c;
     overflow: hidden;
   }
   .section-header {
     display: flex;
     align-items: center;
-    padding: 10px 14px;
-    background: #232325;
+    padding: 6px 10px;
+    background: #1c1c1e;
     cursor: pointer;
     user-select: none;
   }
   .section-title {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     color: #ddd;
     flex: 1;
   }
   .section-count {
     color: #888;
-    font-size: 11px;
-    margin-right: 6px;
+    font-size: 10px;
+    margin-right: 5px;
   }
   .section-toggle {
     color: #666;
-    font-size: 12px;
+    font-size: 11px;
     transition: transform 0.2s;
   }
   .section.collapsed .section-toggle { transform: rotate(-90deg); }
-  .section-body { padding: 8px 12px 12px; }
+  .section-body { padding: 4px 10px 6px; }
   .section.collapsed .section-body { display: none; }
 
-  /* アイテムカード */
+  /* アイテムカード（コンパクト1行） */
   .item {
-    background: #2a2a2c;
-    border-radius: 8px;
-    padding: 10px 12px;
-    margin-bottom: 6px;
+    background: transparent;
+    border-radius: 0;
+    padding: 4px 2px;
+    margin-bottom: 0;
     display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    border: 1px solid #333;
+    align-items: center;
+    gap: 5px;
+    border: none;
+    border-bottom: 1px solid #232325;
     position: relative;
     cursor: grab;
   }
-  .item:last-child { margin-bottom: 0; }
+  .item:last-child { border-bottom: none; }
   .item.dragging { opacity: 0.4; }
-  .item.drag-over { border-color: #4a90e2; border-style: dashed; }
+  .item.drag-over { background: #1a2a1a; }
   .item-drag {
-    color: #555;
-    font-size: 14px;
+    color: #444;
+    font-size: 11px;
     cursor: grab;
-    padding-top: 2px;
     flex-shrink: 0;
     touch-action: none;
   }
   .item-text {
     flex: 1;
-    font-size: 14px;
-    color: #ddd;
+    font-size: 13px;
+    color: #ccc;
     word-break: break-word;
-    white-space: pre-wrap;
-    line-height: 1.45;
+    line-height: 1.3;
   }
-  .item-text.done { text-decoration: line-through; color: #666; }
+  .item-text.done { text-decoration: line-through; color: #555; }
   .item-actions {
     display: flex;
-    gap: 2px;
+    gap: 0;
     flex-shrink: 0;
   }
   .iconbtn {
     background: transparent;
     border: none;
-    color: #666;
-    padding: 2px 6px;
-    font-size: 14px;
+    color: #555;
+    padding: 2px 4px;
+    font-size: 12px;
     border-radius: 4px;
   }
-  .iconbtn:hover { background: #3a3a3c; color: #ccc; }
+  .iconbtn:active { background: #3a3a3c; color: #ccc; }
   .item-meta {
-    font-size: 10px;
-    color: #666;
-    margin-top: 4px;
+    font-size: 9px;
+    color: #555;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    flex-wrap: wrap;
   }
   .item-tag {
     display: inline-block;
@@ -506,6 +563,35 @@
     margin: 2px;
   }
 
+  .location-tag {
+    display: inline-block;
+    background: #1a3a2c;
+    color: #4ade80;
+    border: 1px solid #2a5a3c;
+    border-radius: 6px;
+    padding: 1px 6px;
+    font-size: 9px;
+    margin-right: 3px;
+    font-weight: 700;
+  }
+  /* 今日やること */
+  .todaytasks-area {
+    margin: 0;
+    padding: 0 12px 4px;
+  }
+  .todaytask-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 0;
+    border-bottom: 1px solid #1e1e20;
+  }
+  .todaytask-item:last-child { border-bottom: none; }
+  .todaytask-item.done { opacity: 0.5; }
+  .todaytask-body { flex: 1; min-width: 0; }
+  .todaytask-text { font-size: 13px; color: #e8e8e8; cursor: pointer; }
+  .todaytask-text.done { text-decoration: line-through; color: #666; }
+  .today-btn { color: #4ade80; }
   /* ルール（折りたたみで保管） */
   .rule-text {
     background: #232325;
@@ -946,49 +1032,44 @@
     </div>
   </div>
 
-  <!-- NOWカード -->
-  <div class="now-card" id="nowCard">
-    <div class="now-label">▶ 今これをやれ</div>
-    <div class="now-text now-empty" id="nowText">タップして「今やってること」を1つだけ書く</div>
-    <div class="now-actions" id="nowActions" style="display:none;">
-      <button class="now-btn" id="nowDone">✓ 終わった</button>
-      <button class="now-btn" id="nowClear">クリア</button>
-    </div>
-  </div>
+</div>
 
-  <!-- 今日絶対やる3つ -->
-  <div class="today3">
-    <div class="today3-label">⭐ 今日絶対やる3つ</div>
-    <div id="today3List"></div>
-  </div>
-
-  <!-- メインタブ -->
-  <div class="tab-section-label">⚡ メイン</div>
-  <div class="tabs" id="mainTabs">
-    <button class="tab main active" data-tab="zenbu">全部ここ<span class="badge" id="bz">0</span></button>
-    <button class="tab main" data-tab="shigoto">仕事<span class="badge" id="bs">0</span></button>
-    <button class="tab main" data-tab="okane">お金<span class="badge" id="bo">0</span></button>
-    <button class="tab main" data-tab="eigyou">営業<span class="badge" id="be">0</span></button>
-  </div>
-
-  <!-- サブタブ -->
-  <div class="tab-section-label">🔄 サブ</div>
-  <div class="tabs" id="subTabs">
-    <button class="tab sub" data-tab="seikatsu">生活<span class="badge" id="bk">0</span></button>
-    <button class="tab sub" data-tab="benkyou">勉強<span class="badge" id="bb">0</span></button>
-    <button class="tab sub" data-tab="adhd">ADHD<span class="badge" id="ba">0</span></button>
-    <button class="tab sub" data-tab="rule">ルール</button>
+<!-- NOWカード（flex固定） -->
+<div class="now-card" id="nowCard">
+  <div class="now-label">▶ 今これをやれ</div>
+  <div class="now-text now-empty" id="nowText">タップして「今やってること」を1つだけ書く</div>
+  <div class="now-actions" id="nowActions" style="display:none;">
+    <button class="now-btn" id="nowDone">✓ 終わった</button>
+    <button class="now-btn" id="nowClear">クリア</button>
   </div>
 </div>
 
-<!-- ===== コンテンツエリア ===== -->
+<!-- 今日絶対やる3つ（flex固定） -->
+<div class="today3">
+  <div class="today3-label">⭐ 今日絶対やる3つ</div>
+  <div id="today3List"></div>
+</div>
+
+<!-- ===== 今日やること・やること（flex固定） ===== -->
+<div id="mainArea"></div>
+
+<!-- ===== 切り替えタブ（flex固定） ===== -->
+<div class="tabs" id="mainTabs" style="padding:0 12px;margin-bottom:0;">
+  <button class="tab main active" data-tab="mirai">未来<span class="badge" id="be">0</span></button>
+  <button class="tab main" data-tab="okane">お金<span class="badge" id="bo">0</span></button>
+  <button class="tab main" data-tab="zenbu">全部ここ<span class="badge" id="bz">0</span></button>
+  <button class="tab main" data-tab="trigger">トリガー<span class="badge" id="bt">0</span></button>
+  <button class="tab main" data-tab="rule">ルール</button>
+</div>
+
+<!-- ===== タブコンテンツ（見に行く系） ===== -->
 <div class="content" id="content"></div>
 
-<!-- 取り消しバナー -->
-<div id="trashBanner"></div>
+<!-- 取り消しバナー（fixed） -->
+<div id="trashBanner" style="position:fixed;bottom:0;left:0;right:0;z-index:200;"></div>
 
-<!-- モーダル -->
-<div id="modalContainer"></div>
+<!-- モーダル（fixed） -->
+<div id="modalContainer" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:300;pointer-events:none;"></div>
 
 <script>
 // ========== ストレージ（v9: ローカル＋クラウド同期）==========
@@ -1037,6 +1118,7 @@ function loadFromCloud() {
       renderToday3();
       renderVital();
       updateBadges();
+      renderMainArea();
       renderContent();
       showSyncStatus('✓ クラウドから読み込み完了');
     })
@@ -1058,28 +1140,18 @@ function getDefaultData() {
   return {
     now: '',
     today3: [
-      { id: id(), text: '', done: false, deadline: null, duration: null },
-      { id: id(), text: '', done: false, deadline: null, duration: null },
-      { id: id(), text: '', done: false, deadline: null, duration: null }
+      { id: id(), text: '', done: false, deadline: null, duration: null, location: '' },
+      { id: id(), text: '', done: false, deadline: null, duration: null, location: '' },
+      { id: id(), text: '', done: false, deadline: null, duration: null, location: '' }
     ],
     sleep: [],      // D: 睡眠記録 [{date, minutes}]
     status: [],     // I: 状態スキャン [{date, timestamp, hp, noise, memo}]
     zenbu: [],      // 全部ここ
-    shigoto: { machi: [], shinkou: [], tanemaki: [] },
+    todayTasks: [],  // 今日やること（流動的・持ち越しあり）
+    yarukoto: { machi: [], doiteru: [], teishutsu: [], yakusoku: [], izure: [] },
     okane: { nyukin: [], miseikyu: [], mikaisyu: [] },
-    eigyou: { a: [], b: [], c: [] },
-    seikatsu: { yakusoku: [], jibun: [], yarakashi: [] },
-    benkyou: {
-      slots: {
-        asa: { done: false, memo: '' },
-        kuruma: { done: false, memo: '' },
-        sukima: { done: false, memo: '' },
-        yoru: { done: false, memo: '' }
-      },
-      streak: 0,
-      lastDate: ''
-    },
-    adhd: { trigger: [], log: [] },
+    mirai: { imasugukane: [], shodan: [], tanemaki: [] },
+    adhd: { trigger: [] },
     rules: null,   // null=未初期化。初回マイグレーションでDEFAULT_RULESを投入
     trash: [],
     lastReset: ''
@@ -1109,8 +1181,8 @@ function defaultRules() {
 `1. 仕事の振り分け
 ① 5分以内で終わる？ → 今やる
 ② 今日中に必要？ → ①今日3つ
-③ 誰か絡んでる？ → 仕事タブ「待ち」
-④ それ以外 → 営業タブ
+③ 誰か絡んでる？ → やること「待ち」
+④ それ以外 → 未来タブ
 
 2. 振る/自分でやる
 ・俺じゃないと無理？ → YESならやる
@@ -1135,7 +1207,7 @@ NO多い → やらない` },
 ・ながら禁止
 ・タイマーで切る
 ・1日3つでいい
-・営業A/B/C毎日触る
+・未来タブ毎日触る
 ・最低5分やる
 ・完璧にやらない` },
     { id: id(), title: 'SNSルール', collapsed: true, text:
@@ -1154,9 +1226,31 @@ let state = loadData();
 // ===== マイグレーション（既存データを壊さず、未初期化なら初期値投入）=====
 function migrateState() {
   let changed = false;
-  if (!state.adhd) { state.adhd = { trigger: [], log: [] }; changed = true; }
+  // 旧データ互換: shigoto→yarukotoへ移行
+  if (state.shigoto && !state.yarukoto) {
+    state.yarukoto = {
+      machi: state.shigoto.machi || [],
+      doiteru: state.shigoto.shinkou || [],
+      teishutsu: [],
+      yakusoku: (state.seikatsu && state.seikatsu.yakusoku) || [],
+      izure: state.shigoto.tanemaki || []
+    };
+    changed = true;
+  }
+  if (!state.yarukoto) { state.yarukoto = { machi: [], doiteru: [], teishutsu: [], yakusoku: [], izure: [] }; changed = true; }
+  // 旧データ互換: eigyou→miraiへ移行
+  if (state.eigyou && !state.mirai) {
+    state.mirai = {
+      imasugukane: state.eigyou.a || [],
+      shodan: state.eigyou.b || [],
+      tanemaki: state.eigyou.c || []
+    };
+    changed = true;
+  }
+  if (!state.mirai) { state.mirai = { imasugukane: [], shodan: [], tanemaki: [] }; changed = true; }
+  // adhdはtriggerのみ
+  if (!state.adhd) { state.adhd = { trigger: [] }; changed = true; }
   if (!Array.isArray(state.adhd.trigger)) { state.adhd.trigger = []; changed = true; }
-  if (!Array.isArray(state.adhd.log)) { state.adhd.log = []; changed = true; }
   if (state.adhd.trigger.length === 0 && !state._trigInit) {
     state.adhd.trigger = defaultTriggers();
     state._trigInit = true;
@@ -1166,6 +1260,7 @@ function migrateState() {
     state.rules = defaultRules();
     changed = true;
   }
+  if (!Array.isArray(state.todayTasks)) { state.todayTasks = []; changed = true; }
   if (changed) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){} }
 }
 migrateState();
@@ -1180,19 +1275,14 @@ let dragSrc = null;
 function checkDailyReset() {
   const today = new Date().toISOString().slice(0,10);
   if (state.lastReset !== today) {
-    // 勉強スロットをリセット
-    Object.keys(state.benkyou.slots).forEach(k => {
-      state.benkyou.slots[k].done = false;
-    });
-    // ストリーク判定: 前日に何か1つでも完了していたら継続
-    if (state.lastReset) {
-      const prevDone = state.benkyou.lastDate === state.lastReset;
-      if (!prevDone) state.benkyou.streak = 0;
-    }
     // 今日3つは持ち越し（done=true は消す）
     state.today3 = state.today3.map(t =>
-      t.done ? { id: id(), text: '', done: false, deadline: null, duration: null } : t
+      t.done ? { id: id(), text: '', done: false, deadline: null, duration: null, location: '' } : t
     );
+    // 今日やることは持ち越し（done=true は消す）
+    if (Array.isArray(state.todayTasks)) {
+      state.todayTasks = state.todayTasks.filter(t => !t.done);
+    }
     state.lastReset = today;
     saveData();
   }
@@ -1201,32 +1291,25 @@ function checkDailyReset() {
 // ========== バッジ更新 ==========
 function updateBadges() {
   const count = arr => Array.isArray(arr) ? arr.length : 0;
-  document.getElementById('bz').textContent = count(state.zenbu);
-  document.getElementById('bz').classList.toggle('zero', count(state.zenbu) === 0);
+  const setBadge = (id, n) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = n;
+    el.classList.toggle('zero', n === 0);
+  };
 
-  const sCount = count(state.shigoto.machi) + count(state.shigoto.shinkou) + count(state.shigoto.tanemaki);
-  document.getElementById('bs').textContent = sCount;
-  document.getElementById('bs').classList.toggle('zero', sCount === 0);
+  setBadge('bz', count(state.zenbu));
+
+  const sCount = count(state.yarukoto.machi) + count(state.yarukoto.doiteru) + count(state.yarukoto.teishutsu) + count(state.yarukoto.yakusoku) + count(state.yarukoto.izure);
+  setBadge('bs', sCount);
 
   const oCount = count(state.okane.nyukin) + count(state.okane.miseikyu) + count(state.okane.mikaisyu);
-  document.getElementById('bo').textContent = oCount;
-  document.getElementById('bo').classList.toggle('zero', oCount === 0);
+  setBadge('bo', oCount);
 
-  const eCount = count(state.eigyou.a) + count(state.eigyou.b) + count(state.eigyou.c);
-  document.getElementById('be').textContent = eCount;
-  document.getElementById('be').classList.toggle('zero', eCount === 0);
+  const eCount = count(state.mirai.imasugukane) + count(state.mirai.shodan) + count(state.mirai.tanemaki);
+  setBadge('be', eCount);
 
-  const kCount = count(state.seikatsu.yakusoku);
-  document.getElementById('bk').textContent = kCount;
-  document.getElementById('bk').classList.toggle('zero', kCount === 0);
-
-  const bCount = Object.values(state.benkyou.slots).filter(s => !s.done).length;
-  document.getElementById('bb').textContent = bCount;
-  document.getElementById('bb').classList.toggle('zero', bCount === 0);
-
-  const aCount = count(state.adhd.log);
-  document.getElementById('ba').textContent = aCount;
-  document.getElementById('ba').classList.toggle('zero', aCount === 0);
+  setBadge('bt', count(state.adhd.trigger));
 }
 
 // ========== NOWカード ==========
@@ -1273,14 +1356,14 @@ function renderToday3() {
     const row = document.createElement('div');
     row.className = 'today3-item' + (t.done ? ' done' : '');
     row.dataset.i = i;
-    const hasMeta = t.deadline || (t.duration !== null && t.duration !== undefined);
+    const hasMeta = t.deadline || (t.duration !== null && t.duration !== undefined) || t.location;
     row.innerHTML = `
       ${t.text ? '<span class="today3-handle" data-handle="1">⋮⋮</span>' : ''}
       <div class="check ${t.done ? 'checked' : ''}" data-i="${i}"></div>
       <div class="today3-text ${!t.text ? 'placeholder' : ''}" data-i="${i}">${escape(t.text) || `${i+1}つ目を書く`}</div>
       ${t.text && !t.done ? `<button class="today3-now-btn" data-now="${i}">今これ</button>` : ''}
       ${t.text ? `<button class="today3-del" data-i="${i}">×</button>` : ''}
-      ${hasMeta ? `<div class="today3-meta-row">${deadlineMarkHtml(t.deadline)}${durationTagHtml(t.duration)}</div>` : ''}
+      ${hasMeta ? `<div class="today3-meta-row">${t.location ? locationTagHtml(t.location) : ''}${deadlineMarkHtml(t.deadline)}${durationTagHtml(t.duration)}</div>` : ''}
     `;
     wrap.appendChild(row);
 
@@ -1363,6 +1446,7 @@ function renderToday3() {
           state.today3[i].text = r.text;
           state.today3[i].deadline = r.deadline;
           state.today3[i].duration = r.duration;
+          state.today3[i].location = r.location || '';
           state.today3[i].done = false;
         }
         saveData(); renderToday3();
@@ -1463,7 +1547,7 @@ function sendQuick() {
   quickInput.value = '';
   quickInput.style.height = 'auto';
   saveData();
-  if (currentTab === 'zenbu') renderContent();
+  renderMainArea();
   updateBadges();
 }
 
@@ -1474,30 +1558,174 @@ document.querySelectorAll('.tab').forEach(t => {
     t.classList.add('active');
     currentTab = t.dataset.tab;
     renderContent();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // タブエリアの先頭にスクロール（画面上部には戻らない）
+    const contentEl = document.getElementById('content');
+    if (contentEl) contentEl.scrollTop = 0;
   });
 });
 
-// ========== コンテンツレンダー ==========
+// ========== メインエリア（常時表示）==========
+function renderMainArea() {
+  const c = document.getElementById('mainArea');
+  if (!c) return;
+  c.innerHTML = '';
+  try { renderTodayTasks(c); } catch(e) { console.error('renderTodayTasks error:', e); }
+  try { renderYarukoto(c); } catch(e) { console.error('renderYarukoto error:', e); }
+}
+
+// ========== タブコンテンツレンダー ==========
 function renderContent() {
   const c = document.getElementById('content');
   c.innerHTML = '';
   switch(currentTab) {
     case 'zenbu': renderZenbu(c); break;
-    case 'shigoto': renderShigoto(c); break;
     case 'okane': renderOkane(c); break;
-    case 'eigyou': renderEigyou(c); break;
-    case 'seikatsu': renderSeikatsu(c); break;
-    case 'benkyou': renderBenkyou(c); break;
-    case 'adhd': renderAdhd(c); break;
+    case 'mirai': renderMirai(c); break;
+    case 'trigger': renderTrigger(c); break;
     case 'rule': renderRule(c); break;
   }
 }
 
+// ----- 今日やること -----
+function renderTodayTasks(c) {
+  if (!Array.isArray(state.todayTasks)) state.todayTasks = [];
+  const wrap = document.createElement('div');
+  wrap.className = 'todaytasks-area';
+  const isCollapsed = state._todayTasksCollapsed !== undefined ? state._todayTasksCollapsed : false;
+  const sec = makeSection('📋 今日やること', state.todayTasks.filter(t=>!t.done).length, isCollapsed);
+  sec.section.querySelector('.section-header').addEventListener('click', () => {
+    state._todayTasksCollapsed = sec.section.classList.contains('collapsed');
+    saveData();
+  });
+  wrap.appendChild(sec.section);
+  c.appendChild(wrap);
+
+  const list = document.createElement('div');
+  list.id = 'todayTasksList';
+  sec.body.appendChild(list);
+
+  state.todayTasks.forEach((task, idx) => {
+    const row = document.createElement('div');
+    row.className = 'todaytask-item' + (task.done ? ' done' : '');
+    row.dataset.idx = idx;
+
+    const locHtml = task.location ? locationTagHtml(task.location) : '';
+    const dlHtml = task.deadline ? deadlineMarkHtml(task.deadline) : '';
+    const durHtml = (task.duration !== null && task.duration !== undefined) ? durationTagHtml(task.duration) : '';
+    const hasMeta = task.location || task.deadline || (task.duration !== null && task.duration !== undefined);
+
+    row.innerHTML = `
+      <div class="check ${task.done ? 'checked' : ''}" data-tidx="${idx}"></div>
+      <div class="todaytask-body">
+        <div class="todaytask-text ${task.done ? 'done' : ''}" data-edit="${idx}">${escape(task.text)}</div>
+        ${hasMeta ? `<div class="item-meta">${locHtml}${dlHtml}${durHtml}</div>` : ''}
+      </div>
+      <div class="item-actions">
+        <button class="iconbtn" data-tnow="${idx}" title="今これへ">▶</button>
+        <button class="iconbtn" data-t3="${idx}" title="今日3つへ">⭐</button>
+        <button class="iconbtn" data-tmove="${idx}" title="移動">→</button>
+        <button class="iconbtn" data-tdel="${idx}" title="削除">×</button>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+
+  if (state.todayTasks.length === 0) {
+    const e = document.createElement('div');
+    e.className = 'empty-state';
+    e.textContent = 'やることタブから昇格、または直接追加';
+    list.appendChild(e);
+  }
+
+  // 直接追加ボタン
+  const addBtn = document.createElement('button');
+  addBtn.className = 'miniadd';
+  addBtn.textContent = '＋ 今日やること追加';
+  addBtn.addEventListener('click', () => {
+    openYarukotoTaskModal({}, r => {
+      state.todayTasks.unshift({ id: id(), text: r.text, ts: Date.now(), location: r.location, deadline: r.deadline, duration: r.duration, done: false });
+      saveData(); renderMainArea(); updateBadges();
+    });
+  });
+  sec.body.appendChild(addBtn);
+
+  // イベント
+  list.querySelectorAll('.check').forEach(el => {
+    el.addEventListener('click', () => {
+      const i = +el.dataset.tidx;
+      state.todayTasks[i].done = !state.todayTasks[i].done;
+      saveData(); renderMainArea(); updateBadges();
+    });
+  });
+  list.querySelectorAll('[data-edit]').forEach(el => {
+    el.addEventListener('click', () => {
+      const i = +el.dataset.edit;
+      openYarukotoTaskModal(state.todayTasks[i], r => {
+        state.todayTasks[i] = { ...state.todayTasks[i], text: r.text, location: r.location, deadline: r.deadline, duration: r.duration };
+        saveData(); renderMainArea();
+      });
+    });
+  });
+  // 今これへ
+  list.querySelectorAll('[data-tnow]').forEach(el => {
+    el.addEventListener('click', () => {
+      const i = +el.dataset.tnow;
+      const task = state.todayTasks[i];
+      const promote = () => {
+        if (state.now) {
+          const empty = state.today3.findIndex(t => !t.text);
+          if (empty >= 0) state.today3[empty] = { id: id(), text: state.now, done: false, deadline: null, duration: null, location: '' };
+        }
+        state.now = task.text;
+        saveData(); renderNow(); renderMainArea();
+      };
+      if (state.now) {
+        confirmDialog('今これを入れ替える？', promote);
+      } else { promote(); }
+    });
+  });
+  // 今日3つへ
+  list.querySelectorAll('[data-t3]').forEach(el => {
+    el.addEventListener('click', () => {
+      const i = +el.dataset.t3;
+      const task = state.todayTasks[i];
+      const empty = state.today3.findIndex(t => !t.text);
+      if (empty >= 0) {
+        state.today3[empty] = { id: id(), text: task.text, done: false, deadline: task.deadline, duration: task.duration, location: task.location || '' };
+        state.todayTasks.splice(i, 1);
+        saveData(); renderToday3(); renderMainArea();
+      } else {
+        confirmDialog('今日3つが全部埋まってる。入れ替えは今日3つから直接編集してね。', () => {});
+      }
+    });
+  });
+  // 移動（振り分け）
+  list.querySelectorAll('[data-tmove]').forEach(el => {
+    el.addEventListener('click', () => {
+      const i = +el.dataset.tmove;
+      const task = state.todayTasks[i];
+      openMoveModal(task.text, target => {
+        addToTarget(target, task.text);
+        state.todayTasks.splice(i, 1);
+        saveData(); renderMainArea(); renderToday3(); updateBadges();
+      });
+    });
+  });
+  // 削除
+  list.querySelectorAll('[data-tdel]').forEach(el => {
+    el.addEventListener('click', () => {
+      const i = +el.dataset.tdel;
+      const removed = state.todayTasks.splice(i, 1)[0];
+      state.trash.push({ ...removed, from: 'todayTasks' });
+      saveData(); renderMainArea(); updateBadges();
+      showTrashBanner();
+    });
+  });
+}
+
 // ----- 全部ここ -----
 function renderZenbu(c) {
-  c.innerHTML = `<div class="helper">頭にあるものを全部ここに。整理しないでOK。あとで「振り分け」「タスクに昇格」「削除」する。</div>`;
-  const sec = makeSection('全部ここ', state.zenbu.length, true);
+  const sec = makeSection('全部ここ', state.zenbu.length, false);
   if (state.zenbu.length === 0) {
     sec.body.innerHTML = '<div class="empty-state">空っぽ。上の入力バーから投げ込め。</div>';
   } else {
@@ -1539,7 +1767,7 @@ function editZenbu(itemId) {
       if (!item.text) {
         state.zenbu = state.zenbu.filter(x => x.id !== itemId);
       }
-      saveData(); renderContent(); updateBadges();
+      saveData(); renderMainArea(); updateBadges();
     }
   });
 }
@@ -1557,29 +1785,57 @@ function delZenbu(itemId) {
   if (!item) return;
   state.trash.push({ ...item, from: 'zenbu' });
   state.zenbu = state.zenbu.filter(x => x.id !== itemId);
-  saveData(); renderContent(); updateBadges();
+  saveData(); renderMainArea(); updateBadges();
   showTrashBanner();
 }
 
-// ----- 仕事 -----
-function renderShigoto(c) {
-  const cols = [
-    { key: 'machi', label: '待ち（返信/依頼/外注）' },
-    { key: 'shinkou', label: '進行中（A：今すぐ・動いてる）' },
-    { key: 'tanemaki', label: '種まき（B：仕込み・C：いつか）' }
-  ];
-  addDeadlineFilter(c, cols.map(col => 'shigoto.' + col.key));
-  cols.forEach(col => {
-    const sec = makeSection(col.label, state.shigoto[col.key].length);
-    renderItemList(sec.body, state.shigoto[col.key], 'shigoto.' + col.key);
-    addMiniAdd(sec.body, () => {
-      promptAdd('追加', txt => {
-        state.shigoto[col.key].unshift({ id: id(), text: txt, ts: Date.now() });
-        saveData(); renderContent(); updateBadges();
-      });
+// ----- やること（サブタブ） -----
+let currentYarukotoTab = 'machi'; // デフォルト：待ち
+
+const YARUKOTO_COLS = [
+  { key: 'machi', label: '待ち' },
+  { key: 'doiteru', label: '動いてる' },
+  { key: 'teishutsu', label: '提出' },
+  { key: 'yakusoku', label: '約束' },
+  { key: 'izure', label: 'いずれ' }
+];
+
+function renderYarukoto(c) {
+  const wrap = document.createElement('div');
+  wrap.id = 'yarukotoArea';
+  wrap.style.touchAction = 'pan-y';
+
+  // サブタブ
+  const tabBar = document.createElement('div');
+  tabBar.className = 'yarukoto-tabs';
+  YARUKOTO_COLS.forEach(col => {
+    const btn = document.createElement('button');
+    btn.className = 'ytab' + (col.key === currentYarukotoTab ? ' active' : '');
+    const cnt = state.yarukoto[col.key].length;
+    const badge = cnt > 0 ? `<span class="badge${cnt===0?' zero':''}">${cnt}</span>` : '';
+    btn.innerHTML = col.label + badge;
+    btn.addEventListener('click', () => {
+      currentYarukotoTab = col.key;
+      renderMainArea();
     });
-    c.appendChild(sec.section);
+    tabBar.appendChild(btn);
   });
+  wrap.appendChild(tabBar);
+
+  // 選択中タブの中身
+  const col = YARUKOTO_COLS.find(c => c.key === currentYarukotoTab);
+  const body = document.createElement('div');
+  body.style.cssText = 'padding:4px 12px 8px;';
+  addDeadlineFilter(body, ['yarukoto.' + col.key]);
+  renderItemList(body, state.yarukoto[col.key], 'yarukoto.' + col.key);
+  addMiniAdd(body, () => {
+    openYarukotoTaskModal({}, r => {
+      state.yarukoto[col.key].unshift({ id: id(), text: r.text, ts: Date.now(), location: r.location, deadline: r.deadline, duration: r.duration });
+      saveData(); renderMainArea(); updateBadges();
+    });
+  });
+  wrap.appendChild(body);
+  c.appendChild(wrap);
 }
 
 // ----- お金 -----
@@ -1622,146 +1878,51 @@ function renderOkane(c) {
     addMiniAdd(sec.body, () => {
       promptAdd('追加', txt => {
         state.okane[col.key].unshift({ id: id(), text: txt, ts: Date.now() });
-        saveData(); renderContent(); updateBadges();
+        saveData(); renderMainArea(); renderContent(); updateBadges();
       });
     });
     c.appendChild(sec.section);
   });
 }
 
-// ----- 営業 -----
-function renderEigyou(c) {
-  c.innerHTML = `<div class="helper">毎日触る。Aは今すぐ動く、Bは仕込み中、Cは種まき。</div>`;
+// ----- 未来 -----
+function renderMirai(c) {
+  c.innerHTML = `<div class="helper">毎日触る。仕事がなくなる不安をなくすための場所。営業をオートにする。</div>`;
   const cols = [
-    { key: 'a', label: 'A：今すぐ金（直近で売上になる）' },
-    { key: 'b', label: 'B：見積・調整中（提案中の案件）' },
-    { key: 'c', label: 'C：種まき（新規開拓）' }
+    { key: 'imasugukane', label: '今すぐ金（直近で売上になる）' },
+    { key: 'shodan', label: '商談中（今まさに仕事になりそうな案件）' },
+    { key: 'tanemaki', label: '種まき（来週・来月・再来月の動き）' }
   ];
-  addDeadlineFilter(c, cols.map(col => 'eigyou.' + col.key));
+  addDeadlineFilter(c, cols.map(col => 'mirai.' + col.key));
   cols.forEach(col => {
-    const sec = makeSection(col.label, state.eigyou[col.key].length);
-    renderItemList(sec.body, state.eigyou[col.key], 'eigyou.' + col.key);
+    const sec = makeSection(col.label, state.mirai[col.key].length);
+    renderItemList(sec.body, state.mirai[col.key], 'mirai.' + col.key);
     addMiniAdd(sec.body, () => {
       promptAdd('追加', txt => {
-        state.eigyou[col.key].unshift({ id: id(), text: txt, ts: Date.now() });
-        saveData(); renderContent(); updateBadges();
+        state.mirai[col.key].unshift({ id: id(), text: txt, ts: Date.now() });
+        saveData(); renderMainArea(); renderContent(); updateBadges();
       });
     });
     c.appendChild(sec.section);
   });
 }
 
-// ----- 生活 -----
-function renderSeikatsu(c) {
-  c.innerHTML = `<div class="helper">当たり前を人並みにこなすための領域。約束・予定・自分との約束。</div>`;
-  addDeadlineFilter(c, ['seikatsu.yakusoku', 'seikatsu.jibun', 'seikatsu.yarakashi']);
+// ----- 生活タブ削除済み（v10） -----
 
-  // 今日の約束
-  const sec1 = makeSection('今日の約束（人との約束・予定）', state.seikatsu.yakusoku.length);
-  renderItemList(sec1.body, state.seikatsu.yakusoku, 'seikatsu.yakusoku');
-  addMiniAdd(sec1.body, () => {
-    promptAdd('約束を追加（例: 14:00 ○○さんに電話）', txt => {
-      state.seikatsu.yakusoku.unshift({ id: id(), text: txt, ts: Date.now() });
-      saveData(); renderContent(); updateBadges();
-    });
-  });
-  c.appendChild(sec1.section);
+// ----- 勉強タブ削除済み（v10） -----
 
-  // 自分との約束
-  const sec2 = makeSection('自分との約束（守れてるか？）', state.seikatsu.jibun.length);
-  renderItemList(sec2.body, state.seikatsu.jibun, 'seikatsu.jibun');
-  addMiniAdd(sec2.body, () => {
-    promptAdd('自分との約束（例: SNSは隙間5分だけ）', txt => {
-      state.seikatsu.jibun.unshift({ id: id(), text: txt, ts: Date.now() });
-      saveData(); renderContent(); updateBadges();
-    });
-  });
-  c.appendChild(sec2.section);
-
-  // やらかし
-  const sec3 = makeSection('最近のやらかし（繰り返さない用）', state.seikatsu.yarakashi.length, true);
-  renderItemList(sec3.body, state.seikatsu.yarakashi, 'seikatsu.yarakashi');
-  addMiniAdd(sec3.body, () => {
-    promptAdd('やらかし（例: 約束時間に遅れた）', txt => {
-      state.seikatsu.yarakashi.unshift({ id: id(), text: txt, ts: Date.now() });
-      saveData(); renderContent(); updateBadges();
-    });
-  });
-  c.appendChild(sec3.section);
-}
-
-// ----- 勉強 -----
-function renderBenkyou(c) {
-  // ストリーク
-  const sc = document.createElement('div');
-  sc.className = 'streak-card';
-  sc.innerHTML = `
-    <div class="streak-num">${state.benkyou.streak}</div>
-    <div class="streak-label">DAY STREAK</div>
-    <div class="streak-sub">最低5分でOK。続けることが全て。</div>
-  `;
-  c.appendChild(sc);
-
-  // 4スロット
-  const grid = document.createElement('div');
-  grid.className = 'slot-grid';
-  const slots = [
-    { key: 'asa', label: '朝/寝る前 5分' },
-    { key: 'kuruma', label: '車中（復習だけ）' },
-    { key: 'sukima', label: '隙間 5-15分' },
-    { key: 'yoru', label: '夜 30-60分（メイン）' }
-  ];
-  slots.forEach(s => {
-    const slot = state.benkyou.slots[s.key];
-    const el = document.createElement('div');
-    el.className = 'slot' + (slot.done ? ' done' : '');
-    el.innerHTML = `
-      <div class="slot-name">${s.label} <span class="slot-check">${slot.done ? '✓' : ''}</span></div>
-      <div class="slot-detail">${slot.memo || (slot.done ? '完了' : 'タップで完了')}</div>
-    `;
-    el.addEventListener('click', () => {
-      const wasUndone = !slot.done;
-      slot.done = !slot.done;
-      // 今日のうち1つでも完了したらストリーク+1
-      if (wasUndone) {
-        const today = new Date().toISOString().slice(0,10);
-        if (state.benkyou.lastDate !== today) {
-          state.benkyou.streak++;
-          state.benkyou.lastDate = today;
-        }
-      }
-      saveData(); renderContent(); updateBadges();
-    });
-    grid.appendChild(el);
-  });
-  c.appendChild(grid);
-}
-
-// ----- ADHD対策 -----
-function renderAdhd(c) {
-  c.innerHTML = `<div class="helper">自分の特性と付き合うログ。トリガー反応、振り返り。</div>`;
-
-  // 今日のログ
-  const sec1 = makeSection('今日の気づき・振り返り', state.adhd.log.length);
-  renderItemList(sec1.body, state.adhd.log, 'adhd.log');
-  addMiniAdd(sec1.body, () => {
-    promptAdd('気づき（例: 集中切れた、なぜ?）', txt => {
-      state.adhd.log.unshift({ id: id(), text: txt, ts: Date.now() });
-      saveData(); renderContent(); updateBadges();
-    });
-  });
-  c.appendChild(sec1.section);
-
-  // トリガーリスト（編集可能：日々の気づきで育てる）
-  const sec2 = makeSection('トリガー（これやったらこれ／迷ったら見る）', state.adhd.trigger.length, true);
-  renderItemList(sec2.body, state.adhd.trigger, 'adhd.trigger', { simple: true });
-  addMiniAdd(sec2.body, () => {
-    promptAdd('トリガー追加（例: タイマー鳴った → 俯瞰）', txt => {
+// ----- トリガー -----
+function renderTrigger(c) {
+  c.innerHTML = `<div class="helper">if-thenプランニング。「これやったらこれ」を育てる場所。増やしたり減らしたり修正したりしながら自分専用にしていく。</div>`;
+  const sec = makeSection('トリガー（if → then）', state.adhd.trigger.length, false);
+  renderItemList(sec.body, state.adhd.trigger, 'adhd.trigger', { simple: true });
+  addMiniAdd(sec.body, () => {
+    promptAdd('追加（例: 現場着いたら → 5分俯瞰）', txt => {
       state.adhd.trigger.push({ id: id(), text: txt, ts: Date.now() });
-      saveData(); renderContent(); updateBadges();
+      saveData(); renderMainArea(); renderContent(); updateBadges();
     });
   });
-  c.appendChild(sec2.section);
+  c.appendChild(sec.section);
 }
 
 // ----- ルール -----
@@ -1870,12 +2031,14 @@ function renderItemList(body, arr, path, opts) {
     d.dataset.path = path;
     d.dataset.idx = idx;
     d.draggable = true;
-    const metaLine = (!simple && (item.deadline || (item.duration !== null && item.duration !== undefined)))
-      ? `${deadlineMarkHtml(item.deadline)}${durationTagHtml(item.duration)}` : '';
+    const metaLine = !simple
+      ? `${item.location ? locationTagHtml(item.location) : ''}${deadlineMarkHtml(item.deadline)}${durationTagHtml(item.duration)}` : '';
+    const isYarukoto = path && path.startsWith('yarukoto.');
     const actionsHtml = simple
       ? `<button class="iconbtn" data-act="edit">✎</button>
          <button class="iconbtn" data-act="del">×</button>`
       : `<button class="iconbtn" data-act="check">${item.done ? '↻' : '✓'}</button>
+         ${isYarukoto ? `<button class="iconbtn today-btn" data-act="today" title="今日やるへ">📋</button>` : ''}
          <button class="iconbtn" data-act="edit">✎</button>
          <button class="iconbtn" data-act="move">→</button>
          <button class="iconbtn" data-act="del">×</button>`;
@@ -1915,7 +2078,7 @@ function renderItemList(body, arr, path, opts) {
     const checkBtn = d.querySelector('[data-act=check]');
     if (checkBtn) checkBtn.addEventListener('click', () => {
       item.done = !item.done;
-      saveData(); renderContent(); updateBadges();
+      saveData(); renderMainArea(); renderContent(); updateBadges();
     });
     d.querySelector('[data-act=edit]').addEventListener('click', () => {
       if (simple) {
@@ -1927,8 +2090,20 @@ function renderItemList(body, arr, path, opts) {
               const i = arr.findIndex(x => x.id === item.id);
               if (i >= 0) arr.splice(i, 1);
             }
-            saveData(); renderContent(); updateBadges();
+            saveData(); renderMainArea(); renderContent(); updateBadges();
           }
+        });
+      } else if (path && path.startsWith('yarukoto.')) {
+        openYarukotoTaskModal(item, r => {
+          item.text = r.text;
+          item.location = r.location;
+          item.deadline = r.deadline;
+          item.duration = r.duration;
+          if (!item.text) {
+            const i = arr.findIndex(x => x.id === item.id);
+            if (i >= 0) arr.splice(i, 1);
+          }
+          saveData(); renderMainArea(); renderContent(); updateBadges();
         });
       } else {
         openTaskMetaModal(item, r => {
@@ -1939,9 +2114,16 @@ function renderItemList(body, arr, path, opts) {
             const i = arr.findIndex(x => x.id === item.id);
             if (i >= 0) arr.splice(i, 1);
           }
-          saveData(); renderContent(); updateBadges();
+          saveData(); renderMainArea(); renderContent(); updateBadges();
         });
       }
+    });
+    const todayBtn = d.querySelector('[data-act=today]');
+    if (todayBtn) todayBtn.addEventListener('click', () => {
+      state.todayTasks.unshift({ id: id(), text: item.text, ts: Date.now(), location: item.location || '', deadline: item.deadline || null, duration: item.duration !== undefined ? item.duration : null, done: false });
+      const i = arr.findIndex(x => x.id === item.id);
+      if (i >= 0) arr.splice(i, 1);
+      saveData(); renderMainArea(); updateBadges();
     });
     const moveBtn = d.querySelector('[data-act=move]');
     if (moveBtn) moveBtn.addEventListener('click', () => {
@@ -1949,7 +2131,7 @@ function renderItemList(body, arr, path, opts) {
         addToTarget(target, item.text);
         const i = arr.findIndex(x => x.id === item.id);
         if (i >= 0) arr.splice(i, 1);
-        saveData(); renderContent(); updateBadges();
+        saveData(); renderMainArea(); renderContent(); updateBadges();
       });
     });
     d.querySelector('[data-act=del]').addEventListener('click', () => {
@@ -1957,7 +2139,7 @@ function renderItemList(body, arr, path, opts) {
       if (i >= 0) {
         const removed = arr.splice(i, 1)[0];
         state.trash.push({ ...removed, from: path });
-        saveData(); renderContent(); updateBadges();
+        saveData(); renderMainArea(); renderContent(); updateBadges();
         showTrashBanner();
       }
     });
@@ -2033,7 +2215,9 @@ function addDeadlineFilter(container, paths) {
   btn.addEventListener('click', () => {
     const turnOn = !anyOn;
     paths.forEach(p => deadlineFilterPaths[p] = turnOn);
-    renderContent();
+    // yarukotoはmainArea、それ以外はcontent
+    const isMain = paths.some(p => p.startsWith('yarukoto.'));
+    if (isMain) renderMainArea(); else renderContent();
   });
   container.appendChild(btn);
 }
@@ -2058,6 +2242,105 @@ function promptAdd(label, onOk) {
   });
 }
 
+// やることタスク追加・編集モーダル（場所＋期限＋所要時間）
+function openYarukotoTaskModal(task, onSave) {
+  // task = { text, location, deadline, duration } または空オブジェクト（新規）
+  const isNew = !task.text;
+  const bg = document.createElement('div');
+  bg.className = 'modal-bg';
+
+  const dlPresets = [
+    { label: '今日', val: todayISO() },
+    { label: '明日', val: addDaysISO(1) },
+    { label: '今週中(金)', val: fridayISO() },
+    { label: '来週末', val: nextWeekendISO() },
+    { label: '月末', val: monthEndISO() },
+    { label: '期限なし', val: null }
+  ];
+  let dlHtml = '';
+  dlPresets.forEach(p => {
+    const active = (task.deadline === p.val) || (p.val === null && !task.deadline) ? ' active' : '';
+    dlHtml += `<button class="preset-btn${active}" data-dl="${p.val === null ? '' : p.val}">${p.label}</button>`;
+  });
+  let durHtml = '';
+  DURATION_PRESETS.forEach(p => {
+    const active = task.duration === p.min ? ' active' : '';
+    durHtml += `<button class="preset-btn${active}" data-dur="${p.min}">${p.label}</button>`;
+  });
+
+  bg.innerHTML = `
+    <div class="modal">
+      <div class="modal-title">${isNew ? 'タスク追加' : 'タスク編集'}</div>
+      <textarea class="modal-input" id="ykText" placeholder="内容を書く" style="min-height:60px;">${escape(task.text || '')}</textarea>
+      <div style="font-size:11px;color:#aaa;font-weight:700;margin:6px 0 4px;">📍 場所</div>
+      <div class="preset-grid">
+        <button class="preset-btn${!task.location ? ' active' : ''}" data-loc="">タグなし</button>
+        <button class="preset-btn${task.location==='dokodemo' ? ' active' : ''}" data-loc="dokodemo">📱 どこでも</button>
+        <button class="preset-btn${task.location==='idouchuu' ? ' active' : ''}" data-loc="idouchuu">🚗 移動中</button>
+        <button class="preset-btn${task.location==='genba' ? ' active' : ''}" data-loc="genba">🏢 現場</button>
+      </div>
+      <div style="font-size:11px;color:#aaa;font-weight:700;margin:8px 0 4px;">📅 期限</div>
+      <div class="preset-grid" id="ykDlGrid">${dlHtml}</div>
+      <div class="custom-row">
+        <input type="date" class="num" id="ykDlDate" value="${task.deadline || ''}">
+      </div>
+      <div style="font-size:11px;color:#aaa;font-weight:700;margin:8px 0 4px;">⏱ 所要時間</div>
+      <div class="preset-grid" id="ykDurGrid">${durHtml}</div>
+      <div class="modal-footer">
+        <button class="modal-btn secondary" data-act="cancel">キャンセル</button>
+        <button class="modal-btn" data-act="save">${isNew ? '追加' : '保存'}</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('modalContainer').appendChild(bg);
+  setTimeout(() => bg.querySelector('#ykText').focus(), 50);
+
+  let selLoc = task.location || '';
+  let selDeadline = task.deadline || null;
+  let selDuration = (task.duration === undefined ? null : task.duration);
+
+  // 場所
+  bg.querySelectorAll('[data-loc]').forEach(b => {
+    b.addEventListener('click', () => {
+      bg.querySelectorAll('[data-loc]').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      selLoc = b.dataset.loc;
+    });
+  });
+  // 期限プリセット
+  const dlDate = bg.querySelector('#ykDlDate');
+  bg.querySelectorAll('[data-dl]').forEach(b => b.addEventListener('click', () => {
+    bg.querySelectorAll('[data-dl]').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    selDeadline = b.dataset.dl || null;
+    dlDate.value = selDeadline || '';
+  }));
+  dlDate.addEventListener('change', () => {
+    selDeadline = dlDate.value || null;
+    bg.querySelectorAll('[data-dl]').forEach(x => x.classList.remove('active'));
+  });
+  // 所要時間
+  bg.querySelectorAll('[data-dur]').forEach(b => b.addEventListener('click', () => {
+    bg.querySelectorAll('[data-dur]').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    selDuration = +b.dataset.dur;
+  }));
+  // 保存
+  bg.querySelector('[data-act=save]').addEventListener('click', () => {
+    const txt = bg.querySelector('#ykText').value.trim();
+    if (!txt) { bg.remove(); return; }
+    onSave({ text: txt, location: selLoc, deadline: selDeadline, duration: selDuration });
+    bg.remove();
+  });
+  bg.querySelector('[data-act=cancel]').addEventListener('click', () => bg.remove());
+  bg.addEventListener('click', e => { if (e.target === bg) bg.remove(); });
+}
+
+// 旧関数（後方互換用ラッパー）
+function promptAddWithLocation(label, onOk) {
+  openYarukotoTaskModal({}, r => onOk(r.text, r.location, r.deadline, r.duration));
+}
+
 // ========== 振り分け先 ==========
 function addToTarget(target, text) {
   const obj = { id: id(), text, ts: Date.now() };
@@ -2069,10 +2352,14 @@ function addToTarget(target, text) {
     // J: NOWは1つだけ。既存があれば今日3つの空きへ退避
     if (state.now) {
       const empty = state.today3.findIndex(t => !t.text);
-      if (empty >= 0) state.today3[empty] = { id: id(), text: state.now, done: false, deadline: null, duration: null };
+      if (empty >= 0) state.today3[empty] = { id: id(), text: state.now, done: false, deadline: null, duration: null, location: '' };
     }
     state.now = text;
     renderNow();
+  } else if (target === 'todayTasks') {
+    if (!Array.isArray(state.todayTasks)) state.todayTasks = [];
+    state.todayTasks.unshift({ id: id(), text, ts: Date.now(), location: '', deadline: null, duration: null, done: false });
+    renderMainArea();
   } else {
     const [tab, col] = target.split('.');
     if (state[tab] && state[tab][col]) state[tab][col].unshift(obj);
@@ -2114,19 +2401,18 @@ function openMoveModal(text, onMove) {
       <div class="move-grid">
         <button class="move-btn" data-t="now">▶ 今これをやれ</button>
         <button class="move-btn" data-t="today3">⭐ 今日3つ</button>
-        <button class="move-btn" data-t="shigoto.machi">仕事：待ち</button>
-        <button class="move-btn" data-t="shigoto.shinkou">仕事：進行中</button>
-        <button class="move-btn" data-t="shigoto.tanemaki">仕事：種まき</button>
+        <button class="move-btn" data-t="todayTasks">📋 今日やること</button>
+        <button class="move-btn" data-t="yarukoto.machi">やること：待ち</button>
+        <button class="move-btn" data-t="yarukoto.doiteru">やること：動いてる</button>
+        <button class="move-btn" data-t="yarukoto.teishutsu">やること：提出</button>
+        <button class="move-btn" data-t="yarukoto.yakusoku">やること：約束</button>
+        <button class="move-btn" data-t="yarukoto.izure">やること：いずれ</button>
         <button class="move-btn" data-t="okane.nyukin">お金：入金待ち</button>
         <button class="move-btn" data-t="okane.miseikyu">お金：未請求</button>
         <button class="move-btn" data-t="okane.mikaisyu">お金：未回収</button>
-        <button class="move-btn" data-t="eigyou.a">営業：A今すぐ</button>
-        <button class="move-btn" data-t="eigyou.b">営業：B調整中</button>
-        <button class="move-btn" data-t="eigyou.c">営業：C種まき</button>
-        <button class="move-btn" data-t="seikatsu.yakusoku">生活：今日の約束</button>
-        <button class="move-btn" data-t="seikatsu.jibun">生活：自分との約束</button>
-        <button class="move-btn" data-t="seikatsu.yarakashi">生活：やらかし</button>
-        <button class="move-btn" data-t="adhd.log">ADHD：気づき</button>
+        <button class="move-btn" data-t="mirai.imasugukane">未来：今すぐ金</button>
+        <button class="move-btn" data-t="mirai.shodan">未来：商談中</button>
+        <button class="move-btn" data-t="mirai.tanemaki">未来：種まき</button>
       </div>
       <div class="modal-footer">
         <button class="modal-btn secondary" data-act="cancel">キャンセル</button>
@@ -2165,7 +2451,7 @@ function showTrashBanner() {
         const [tab, col] = restored.from.split('.');
         if (state[tab] && state[tab][col]) state[tab][col].unshift(restored);
       }
-      saveData(); renderContent(); updateBadges();
+      saveData(); renderMainArea(); renderContent(); updateBadges();
     }
     banner.innerHTML = '';
   });
@@ -2217,6 +2503,14 @@ function monthEndISO() {
   const d = new Date();
   const e = new Date(d.getFullYear(), d.getMonth()+1, 0);
   return e.toISOString().slice(0,10);
+}
+// 場所タグHTML
+function locationTagHtml(loc) {
+  if (!loc) return '';
+  const map = { dokodemo: '📱 どこでも', idouchuu: '🚗 移動中', genba: '🏢 現場' };
+  const label = map[loc];
+  if (!label) return '';
+  return `<span class="location-tag">${label}</span>`;
 }
 // 期限マークHTML
 function deadlineMarkHtml(deadline) {
@@ -2453,12 +2747,19 @@ function openTaskMetaModal(task, onSave) {
     <div class="modal">
       <div class="modal-title">${escape(task.text || 'タスク')} の設定</div>
       <textarea class="modal-input" id="metaText" placeholder="内容" style="min-height:50px;">${escape(task.text)}</textarea>
-      <div style="font-size:11px;color:#aaa;font-weight:700;margin-bottom:4px;">📅 期限</div>
+      <div style="font-size:11px;color:#aaa;font-weight:700;margin:6px 0 4px;">📍 場所</div>
+      <div class="preset-grid">
+        <button class="preset-btn${!task.location ? ' active' : ''}" data-loc3="">タグなし</button>
+        <button class="preset-btn${task.location==='dokodemo' ? ' active' : ''}" data-loc3="dokodemo">📱 どこでも</button>
+        <button class="preset-btn${task.location==='idouchuu' ? ' active' : ''}" data-loc3="idouchuu">🚗 移動中</button>
+        <button class="preset-btn${task.location==='genba' ? ' active' : ''}" data-loc3="genba">🏢 現場</button>
+      </div>
+      <div style="font-size:11px;color:#aaa;font-weight:700;margin:8px 0 4px;">📅 期限</div>
       <div class="preset-grid" id="dlGrid">${dlHtml}</div>
       <div class="custom-row">
         <input type="date" class="num" id="dlDate" value="${task.deadline || ''}">
       </div>
-      <div style="font-size:11px;color:#aaa;font-weight:700;margin-bottom:4px;">⏱ 所要時間</div>
+      <div style="font-size:11px;color:#aaa;font-weight:700;margin:8px 0 4px;">⏱ 所要時間</div>
       <div class="preset-grid" id="durGrid">${durHtml}</div>
       <div class="modal-footer">
         <button class="modal-btn secondary" data-act="cancel">キャンセル</button>
@@ -2485,9 +2786,17 @@ function openTaskMetaModal(task, onSave) {
     b.classList.add('active');
     selDuration = +b.dataset.dur;
   }));
+  let selLoc3 = task.location || '';
+  bg.querySelectorAll('[data-loc3]').forEach(b => {
+    b.addEventListener('click', () => {
+      bg.querySelectorAll('[data-loc3]').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      selLoc3 = b.dataset.loc3;
+    });
+  });
   bg.querySelector('[data-act=save]').addEventListener('click', () => {
     const txt = bg.querySelector('#metaText').value.trim();
-    onSave({ text: txt, deadline: selDeadline, duration: selDuration });
+    onSave({ text: txt, deadline: selDeadline, duration: selDuration, location: selLoc3 });
     bg.remove();
   });
   bg.querySelector('[data-act=cancel]').addEventListener('click', () => bg.remove());
@@ -2495,18 +2804,22 @@ function openTaskMetaModal(task, onSave) {
 }
 
 // ========== 初期化 ==========
-checkDailyReset();
-renderNow();
-renderToday3();
-renderVital();
-updateBadges();
-renderContent();
-// クラウド（スプシ）から最新データを取得して上書き
-loadFromCloud();
+function safeRun(name, fn) {
+  try { fn(); } catch(e) { console.error(name + ' failed:', e.message, e.stack); }
+}
+safeRun('checkDailyReset', checkDailyReset);
+safeRun('renderNow', renderNow);
+safeRun('renderToday3', renderToday3);
+safeRun('renderVital', renderVital);
+safeRun('updateBadges', updateBadges);
+safeRun('renderMainArea', renderMainArea);
+safeRun('renderContent', renderContent);
+safeRun('loadFromCloud', loadFromCloud);
 
 // 30秒ごとに時間表示を更新
 setInterval(() => {
-  if (currentTab === 'zenbu') renderContent();
+  if (currentTab !== 'mirai' && currentTab !== 'okane' && currentTab !== 'trigger' && currentTab !== 'rule') return;
+  renderContent();
 }, 30000);
 </script>
 
