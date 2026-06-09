@@ -1107,32 +1107,29 @@ function loadFromCloud() {
       } else if (p && Object.keys(p).length > 0) {
         cloud = p;
       } else {
-        showSyncStatus('クラウドにデータなし（ローカルデータ使用中）');
+        showSyncStatus('ローカルデータ使用中');
         return;
       }
 
-      // 旧形式チェック：shigoto/eigyouキーがある = v9以前のデータ
-      // localStorageにyarukotoがあれば新形式優先（上書きしない）
-      const isOldFormat = cloud.shigoto || cloud.eigyou;
-      const localHasNew = state.yarukoto && (
-        (state.yarukoto.machi && state.yarukoto.machi.length > 0) ||
-        (state.yarukoto.doiteru && state.yarukoto.doiteru.length > 0) ||
-        (state.yarukoto.teishutsu && state.yarukoto.teishutsu.length > 0) ||
-        (state.yarukoto.yakusoku && state.yarukoto.yakusoku.length > 0) ||
-        (state.todayTasks && state.todayTasks.length > 0) ||
-        (state.mirai && state.mirai.imasugukane && state.mirai.imasugukane.length > 0)
-      );
+      // 旧形式チェック（shigoto/eigyouキーあり = v9以前）
+      if (cloud.shigoto || cloud.eigyou) {
+        showSyncStatus('⚠ クラウドが旧形式 → ローカル優先');
+        return;
+      }
 
-      if (isOldFormat && localHasNew) {
-        showSyncStatus('⚠ クラウドが旧形式のためローカルデータを保持');
-        // 旧形式でも zenbu・okane・mirai（新キー）・adhd は取り込む
+      // タイムスタンプ比較：ローカルの方が新しければ上書きしない
+      const localTime = state._lastSavedAt || 0;
+      const cloudTime = cloud._lastSavedAt || 0;
+      if (localTime > cloudTime) {
+        showSyncStatus('✓ ローカルが最新（クラウド同期済み）');
+        // ローカルが新しいのでクラウドに保存し直す
+        saveToCloud();
         return;
       }
 
       state = { ...getDefaultData(), ...cloud };
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
       migrateState();
-      // 画面再描画
       renderNow();
       renderToday3();
       renderVital();
@@ -2834,9 +2831,7 @@ safeRun('updateBadges', updateBadges);
 safeRun('renderMainArea', renderMainArea);
 safeRun('renderContent', renderContent);
 // loadFromCloud一時停止中（スプシ旧データ上書き問題対処）
-// // loadFromCloud一時無効化（データ消失問題対応中）
 // safeRun('loadFromCloud', loadFromCloud);
-showSyncStatus('ローカルモード（同期停止中）');
 showSyncStatus('ローカルデータ使用中');
 
 // 30秒ごとに時間表示を更新
