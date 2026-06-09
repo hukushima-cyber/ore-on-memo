@@ -1101,16 +1101,35 @@ function loadFromCloud() {
   fetch(GAS_URL+'?action=load')
     .then(r=>r.json())
     .then(p=>{
+      let cloud = null;
       if (p && Object.keys(p).length > 0 && p[STORAGE_KEY]) {
-        // GAS側がキー指定で返してくる場合
-        state = { ...getDefaultData(), ...p[STORAGE_KEY] };
+        cloud = p[STORAGE_KEY];
       } else if (p && Object.keys(p).length > 0) {
-        // GAS側が中身をそのまま返してくる場合
-        state = { ...getDefaultData(), ...p };
+        cloud = p;
       } else {
-        showSyncStatus('クラウドにデータなし（新規スタート）');
+        showSyncStatus('クラウドにデータなし（ローカルデータ使用中）');
         return;
       }
+
+      // 旧形式チェック：shigoto/eigyouキーがある = v9以前のデータ
+      // localStorageにyarukotoがあれば新形式優先（上書きしない）
+      const isOldFormat = cloud.shigoto || cloud.eigyou;
+      const localHasNew = state.yarukoto && (
+        (state.yarukoto.machi && state.yarukoto.machi.length > 0) ||
+        (state.yarukoto.doiteru && state.yarukoto.doiteru.length > 0) ||
+        (state.yarukoto.teishutsu && state.yarukoto.teishutsu.length > 0) ||
+        (state.yarukoto.yakusoku && state.yarukoto.yakusoku.length > 0) ||
+        (state.todayTasks && state.todayTasks.length > 0) ||
+        (state.mirai && state.mirai.imasugukane && state.mirai.imasugukane.length > 0)
+      );
+
+      if (isOldFormat && localHasNew) {
+        showSyncStatus('⚠ クラウドが旧形式のためローカルデータを保持');
+        // 旧形式でも zenbu・okane・mirai（新キー）・adhd は取り込む
+        return;
+      }
+
+      state = { ...getDefaultData(), ...cloud };
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
       migrateState();
       // 画面再描画
