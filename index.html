@@ -2833,7 +2833,11 @@ safeRun('renderVital', renderVital);
 safeRun('updateBadges', updateBadges);
 safeRun('renderMainArea', renderMainArea);
 safeRun('renderContent', renderContent);
-safeRun('loadFromCloud', loadFromCloud);
+// loadFromCloud一時停止中（スプシ旧データ上書き問題対処）
+// // loadFromCloud一時無効化（データ消失問題対応中）
+// safeRun('loadFromCloud', loadFromCloud);
+showSyncStatus('ローカルモード（同期停止中）');
+showSyncStatus('ローカルデータ使用中');
 
 // 30秒ごとに時間表示を更新
 setInterval(() => {
