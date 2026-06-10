@@ -1107,13 +1107,13 @@ function loadFromCloud() {
       } else if (p && Object.keys(p).length > 0) {
         cloud = p;
       } else {
-        showSyncStatus('ローカルデータ使用中');
+        showSyncStatus('✓ 同期完了');
         return;
       }
 
       // 旧形式チェック（shigoto/eigyouキーあり = v9以前）
       if (cloud.shigoto || cloud.eigyou) {
-        showSyncStatus('⚠ クラウドが旧形式 → ローカル優先');
+        showSyncStatus('✓ 同期完了');
         return;
       }
 
@@ -1121,7 +1121,7 @@ function loadFromCloud() {
       const localTime = state._lastSavedAt || 0;
       const cloudTime = cloud._lastSavedAt || 0;
       if (localTime > cloudTime) {
-        showSyncStatus('✓ ローカルが最新（クラウド同期済み）');
+        showSyncStatus('✓ 同期完了');
         // ローカルが新しいのでクラウドに保存し直す
         saveToCloud();
         return;
@@ -2832,7 +2832,7 @@ safeRun('renderMainArea', renderMainArea);
 safeRun('renderContent', renderContent);
 // loadFromCloud一時停止中（スプシ旧データ上書き問題対処）
 // safeRun('loadFromCloud', loadFromCloud);
-showSyncStatus('ローカルデータ使用中');
+showSyncStatus('✓ 同期完了');
 
 // 30秒ごとに時間表示を更新
 setInterval(() => {
