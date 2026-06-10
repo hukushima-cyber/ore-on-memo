@@ -1001,6 +1001,7 @@
     <a href="mobilenotes://" class="linkbtn">📝 メモ</a>
     <a href="googlegmail://" class="linkbtn">✉️ Gmail</a>
     <a href="shortcuts://run-shortcut?name=Routinely%E9%96%8B%E3%81%8F" class="linkbtn">🔄 Routinely</a>
+    <a href="#" class="linkbtn" id="syncBtn">↻ 同期</a>
   </div>
 
   <!-- 状態スキャン＋睡眠バー（I/D） -->
@@ -1086,59 +1087,117 @@ function loadData() {
     return getDefaultData();
   }
 }
-function saveData() {
-  // ローカル保存（即時・オフライン対応）
+// ========== 同期v2（2026-06-10）: 「新しい方が勝つ」方式 ==========
+// 原則:
+// 1. stateに _updatedAt（最終更新時刻）を持つ。ユーザー操作の保存のたびに更新。
+// 2. 起動時＋アプリに戻ってきた時、クラウドとローカルの _updatedAt を比較して新しい方を採用。
+// 3. 古いデータが新しいデータを上書きすることは絶対にない。
+// 4. クラウドが空の時はローカルを押し上げる（空上書き事故の防止）。
+let syncing = false;      // クラウド取得中フラグ（取得中の保存は完了後にまとめて送る）
+let pendingSave = false;
+let lastPullAt = 0;
+
+function hasContent(s) {
+  if (!s) return false;
+  if (s.now) return true;
+  if ((s.today3 || []).some(t => t && t.text)) return true;
+  if ((s.zenbu || []).length || (s.todayTasks || []).length || (s.trash || []).length) return true;
+  for (const g of [s.yarukoto, s.okane, s.mirai]) {
+    if (g) for (const k in g) { if ((g[k] || []).length) return true; }
+  }
+  if (s.adhd && (s.adhd.trigger || []).length) return true;
+  if (Array.isArray(s.rules) && s.rules.length) return true;
+  if ((s.sleep || []).length || (s.status || []).length) return true;
+  return false;
+}
+
+function saveLocal() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
-  // クラウド保存（GAS経由でスプシへ）
+}
+
+function pushToCloud(msg) {
   try {
     const data = JSON.stringify(state);
     fetch(GAS_URL+'?action=save&data='+encodeURIComponent(data))
-      .then(r=>r.text()).then(()=>showSyncStatus('✓ 保存'))
+      .then(r=>r.text()).then(()=>showSyncStatus(msg || '✓ 保存'))
       .catch(()=>showSyncStatus('オフライン（ローカル保存のみ）'));
   } catch(e) {}
 }
-function loadFromCloud() {
+
+function saveData() {
+  state._updatedAt = Date.now();
+  saveLocal();
+  if (syncing) { pendingSave = true; return; }
+  pushToCloud();
+}
+
+function rerenderAll() {
+  renderNow();
+  renderToday3();
+  renderVital();
+  updateBadges();
+  renderMainArea();
+  renderContent();
+}
+
+function loadFromCloud(manual) {
+  const nowT = Date.now();
+  if (!manual && nowT - lastPullAt < 15000) return; // 15秒以内の連続取得は省略
+  lastPullAt = nowT;
+  syncing = true;
+  if (manual) showSyncStatus('↻ 同期中…');
   fetch(GAS_URL+'?action=load')
     .then(r=>r.json())
     .then(p=>{
       let cloud = null;
       if (p && Object.keys(p).length > 0 && p[STORAGE_KEY]) {
-        cloud = p[STORAGE_KEY];
+        cloud = p[STORAGE_KEY];        // GAS側がキー指定で返してくる場合
       } else if (p && Object.keys(p).length > 0) {
-        cloud = p;
+        cloud = p;                      // GAS側が中身をそのまま返してくる場合
+      }
+
+      const cloudT = (cloud && cloud._updatedAt) || 0;
+      const localT = state._updatedAt || 0;
+
+      if (!cloud || !hasContent(cloud)) {
+        // クラウドが空 → ローカルを正として押し上げる（空上書き事故の防止）
+        if (hasContent(state)) {
+          if (!state._updatedAt) { state._updatedAt = Date.now(); saveLocal(); }
+          pushToCloud('✓ この端末のデータをクラウドへ保存');
+        } else {
+          showSyncStatus('クラウドにデータなし（新規スタート）');
+        }
+      } else if (cloudT > localT) {
+        // クラウドが新しい → 取り込む
+        state = { ...getDefaultData(), ...cloud };
+        saveLocal();
+        migrateState();
+        checkDailyReset();
+        rerenderAll();
+        showSyncStatus('✓ クラウドから読み込み完了');
+      } else if (cloudT < localT) {
+        // この端末が新しい → クラウドへ押し上げ
+        pushToCloud('✓ この端末が最新（クラウドへ保存）');
+      } else if (cloudT === 0) {
+        // 両方とも旧形式（タイムスタンプなし）→ 取り込まない・押し上げない。
+        // この端末で1回保存（何か編集）した時点でその内容が正になる。
+        showSyncStatus(hasContent(state) ? 'ローカルデータ使用中' : '✓ 読み込み完了');
+        if (!hasContent(state)) {
+          state = { ...getDefaultData(), ...cloud };
+          saveLocal();
+          migrateState();
+          checkDailyReset();
+          rerenderAll();
+        }
       } else {
-        showSyncStatus('✓ 同期完了');
-        return;
+        showSyncStatus('✓ 同期済み');
       }
-
-      // 旧形式チェック（shigoto/eigyouキーあり = v9以前）
-      if (cloud.shigoto || cloud.eigyou) {
-        showSyncStatus('✓ 同期完了');
-        return;
-      }
-
-      // タイムスタンプ比較：ローカルの方が新しければ上書きしない
-      const localTime = state._lastSavedAt || 0;
-      const cloudTime = cloud._lastSavedAt || 0;
-      if (localTime > cloudTime) {
-        showSyncStatus('✓ 同期完了');
-        // ローカルが新しいのでクラウドに保存し直す
-        saveToCloud();
-        return;
-      }
-
-      state = { ...getDefaultData(), ...cloud };
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
-      migrateState();
-      renderNow();
-      renderToday3();
-      renderVital();
-      updateBadges();
-      renderMainArea();
-      renderContent();
-      showSyncStatus('✓ クラウドから読み込み完了');
     })
-    .catch(()=>showSyncStatus('オフライン（ローカルデータ使用中）'));
+    .catch(()=>showSyncStatus('オフライン（ローカルデータ使用中）'))
+    .finally(()=>{
+      syncing = false;
+      if (pendingSave) { pendingSave = false; pushToCloud(); }
+    });
 }
 function showSyncStatus(msg) {
   let el = document.getElementById('sync-status');
@@ -1300,7 +1359,9 @@ function checkDailyReset() {
       state.todayTasks = state.todayTasks.filter(t => !t.done);
     }
     state.lastReset = today;
-    saveData();
+    // ローカルのみ保存。タイムスタンプは更新しない（起動直後の古いデータが
+    // クラウドの新しいデータに勝ってしまうのを防ぐ。次のユーザー操作で同期される）
+    saveLocal();
   }
 }
 
@@ -2830,9 +2891,22 @@ safeRun('renderVital', renderVital);
 safeRun('updateBadges', updateBadges);
 safeRun('renderMainArea', renderMainArea);
 safeRun('renderContent', renderContent);
-// loadFromCloud一時停止中（スプシ旧データ上書き問題対処）
-// safeRun('loadFromCloud', loadFromCloud);
-showSyncStatus('✓ 同期完了');
+safeRun('loadFromCloud', loadFromCloud);
+
+// ===== 複数端末同期の要：アプリに戻ってきた時にクラウドと突き合わせる =====
+// （他の端末で編集した内容を、この端末に戻った瞬間に取り込む。
+//   15秒以内の連続発火は loadFromCloud 側で間引かれる）
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') safeRun('loadFromCloud', loadFromCloud);
+});
+window.addEventListener('focus', () => safeRun('loadFromCloud', loadFromCloud));
+
+// 手動同期ボタン
+const syncBtnEl = document.getElementById('syncBtn');
+if (syncBtnEl) syncBtnEl.addEventListener('click', e => {
+  e.preventDefault();
+  loadFromCloud(true);
+});
 
 // 30秒ごとに時間表示を更新
 setInterval(() => {
